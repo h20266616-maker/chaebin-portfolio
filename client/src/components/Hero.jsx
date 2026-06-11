@@ -12,8 +12,6 @@ export default function Hero() {
               포트폴리오 · 2024
             </p>
             <h1 className="font-bold text-5xl md:text-7xl leading-tight mb-7">
-              안녕하세요,<br />
-              저는{' '}
               <span
                 className="relative inline-block"
                 style={{ color: '#f3a2e3' }}
@@ -24,7 +22,8 @@ export default function Hero() {
                   style={{ backgroundColor: '#f3a2e3' }}
                 />
               </span>
-              입니다.
+              은 디인예에서<br />
+              제일 잘나갑니다
             </h1>
             <p className="font-normal text-lg md:text-xl leading-relaxed mb-6" style={{ color: 'rgba(255,255,255,0.75)' }}>
               디자인과 개발의 경계에서<br />
