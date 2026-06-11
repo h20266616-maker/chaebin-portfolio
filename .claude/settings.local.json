@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\chap1\\\\Downloads\\\\ddddd\" -Recurse -Exclude \"node_modules\",\"dist\",\".git\" | Where-Object { $_.FullName -notmatch \"node_modules|dist|\\\\.git\" } | Select-Object FullName | Sort-Object FullName)"
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\chap1\\\\Downloads\\\\ddddd\" -Recurse -Exclude \"node_modules\",\"dist\",\".git\" | Where-Object { $_.FullName -notmatch \"node_modules|dist|\\\\.git\" } | Select-Object FullName | Sort-Object FullName)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\chap1\\\\Downloads\\\\ddddd\" -Recurse | Where-Object { $_.FullName -notmatch \"node_modules|dist|\\\\.git|\\\\.claude\" } | Select-Object FullName | Sort-Object FullName)"
     ]
   }
 }
