@@ -1,10 +1,35 @@
 import { useState } from 'react'
+import { useScramble } from '../hooks/useScramble'
 
 const navItems = [
-  { label: 'ABOUT', id: 'about' },
-  { label: 'WORK', id: 'work' },
-  { label: 'CONTACT', id: 'contact' },
+  { label: 'MAIN',       id: 'hero' },
+  { label: 'INTRO',      id: 'about-me' },
+  { label: 'ABOUT',      id: 'about' },
+  { label: 'EXPERIENCE', id: 'experience' },
+  { label: 'WORK',       id: 'work' },
+  { label: 'CONTACT',    id: 'contact' },
 ]
+
+function NavItem({ label, id, onNavigate }) {
+  const { display, start, stop } = useScramble(label)
+  return (
+    <button
+      onClick={() => onNavigate(id)}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.color = '#AAFF00'
+        start()
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.color = '#1A1A1A'
+        stop()
+      }}
+      className="font-semibold text-xs tracking-widest uppercase px-4 py-2 transition-colors duration-200"
+      style={{ color: '#1A1A1A' }}
+    >
+      {display}
+    </button>
+  )
+}
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -15,31 +40,29 @@ export default function Header() {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white" style={{ borderBottom: '1px solid #000000' }}>
-      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <header
+      className="fixed top-0 left-0 right-0 z-[100]"
+      style={{ backgroundColor: '#F7F7F7', borderBottom: '1px solid #1A1A1A' }}
+    >
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="font-bold text-xl text-black tracking-tight"
+          className="text-black tracking-tighter flex items-baseline gap-1.5"
         >
-          박채빈
+          <span className="font-bold text-base">parkchaebeen</span>
+          <span className="font-extrabold text-lg">PORTFOLIO</span>
         </button>
 
-        <nav className="hidden md:flex items-center gap-10">
+        <nav className="hidden md:flex items-center gap-1">
           {navItems.map(({ label, id }) => (
-            <button
-              key={id}
-              onClick={() => scrollTo(id)}
-              className="text-black font-semibold text-xs tracking-widest uppercase transition-colors duration-200 hover:text-primary"
-            >
-              {label}
-            </button>
+            <NavItem key={id} label={label} id={id} onNavigate={scrollTo} />
           ))}
         </nav>
 
         <button
           className="md:hidden flex flex-col justify-center gap-1.5 w-8 h-8"
-          onClick={() => setMenuOpen((prev) => !prev)}
-          aria-label="메뉴 열기"
+          onClick={() => setMenuOpen((p) => !p)}
+          aria-label="메뉴"
         >
           <span
             className={`block w-6 h-0.5 bg-black transition-all duration-300 origin-center ${
@@ -61,14 +84,17 @@ export default function Header() {
 
       {menuOpen && (
         <div
-          className="md:hidden bg-white px-6 py-5 flex flex-col gap-5"
-          style={{ borderTop: '1px solid #000000' }}
+          className="md:hidden px-6 py-5 flex flex-col gap-4"
+          style={{ backgroundColor: '#F7F7F7', borderTop: '1px solid #1A1A1A' }}
         >
           {navItems.map(({ label, id }) => (
             <button
               key={id}
               onClick={() => scrollTo(id)}
-              className="text-black font-semibold text-sm tracking-widest uppercase text-left transition-colors duration-200 hover:text-primary"
+              className="font-semibold text-sm tracking-widest uppercase text-left transition-colors duration-200"
+              style={{ color: '#1A1A1A' }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#AAFF00' }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = '#1A1A1A' }}
             >
               {label}
             </button>

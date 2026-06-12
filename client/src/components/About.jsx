@@ -1,156 +1,168 @@
+import { useEffect, useRef, useState } from 'react'
+import StaggerText from './StaggerText'
+
 const skills = [
-  'React', 'TypeScript', 'Next.js', 'Vite',
-  'Tailwind CSS', 'Figma', 'Adobe XD', 'Framer',
-  'Node.js', 'Python', 'UI/UX 디자인', 'Git',
+  'Blender',
+  'Figma',
+  'Illustrator',
+  'Claude',
+  'Claude Code',
+  'Antigravity IDE',
+  'GitHub',
+  'Vercel',
+  'Google Gemini',
+  'ChatGPT',
+  'Flow',
+  'Design',
 ]
 
-const experiences = [
-  {
-    role: '프론트엔드 개발자',
-    org: '(주) 테크스타트업',
-    date: '2024.03 — 현재',
-  },
-  {
-    role: 'UX 디자인 인턴',
-    org: '크리에이티브 스튜디오',
-    date: '2023.07 — 2023.12',
-  },
-  {
-    role: '웹 개발 프리랜서',
-    org: '개인 프로젝트 및 외주',
-    date: '2022.01 — 2023.06',
-  },
+const info = [
+  { label: '이름', value: '박채빈' },
+  { label: '소속', value: '미래융합스쿨 디지털인문예술' },
+  { label: '전공', value: '미래융합스쿨' },
+  { label: '이메일', value: 'h20266616@glab.hallym.ac.kr' },
 ]
 
-const awards = [
-  {
-    name: '대학생 UI/UX 디자인 공모전 최우수상',
-    issuer: '한국디자인진흥원',
-    year: '2024',
-  },
-  {
-    name: '스타트업 해커톤 우수상',
-    issuer: '서울창업허브',
-    year: '2023',
-  },
-  {
-    name: '캡스톤 디자인 프로젝트 우수상',
-    issuer: '학교 컴퓨터공학부',
-    year: '2023',
-  },
-]
+function FadeInOnScroll({ children, delay = 0 }) {
+  const ref = useRef(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.1 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(20px)',
+        transition: `opacity 600ms ease-out ${delay}ms, transform 600ms ease-out ${delay}ms`,
+      }}
+    >
+      {children}
+    </div>
+  )
+}
 
 export default function About() {
   return (
-    <section id="about" className="bg-white text-black py-24">
-      <div className="max-w-6xl mx-auto px-6">
-        <h2
-          className="font-bold text-4xl md:text-5xl mb-16 pb-6"
-          style={{ borderBottom: '1px solid #000000' }}
+    <section id="about" className="flex flex-col md:flex-row" style={{ scrollSnapAlign: 'start', scrollSnapStop: 'normal', minHeight: '100vh' }}>
+      {/* Left panel — black */}
+      <div className="text-white md:w-5/12 px-10 md:px-14 py-20 relative overflow-hidden flex flex-col justify-between min-h-80 md:min-h-screen" style={{ backgroundColor: '#1C1C1C' }}>
+        {/* Rotated decorative "ABOUT" */}
+        <div
+          className="absolute font-extrabold pointer-events-none select-none leading-none"
+          style={{
+            fontSize: 'clamp(80px, 10vw, 160px)',
+            color: '#ffffff',
+            opacity: 0.18,
+            writingMode: 'vertical-rl',
+            transform: 'rotate(180deg)',
+            right: '-0.05em',
+            top: '50%',
+            marginTop: '-2em',
+            letterSpacing: '-0.05em',
+          }}
         >
           ABOUT
-        </h2>
+        </div>
 
-        <div className="grid md:grid-cols-2 gap-16">
+        <div className="relative z-10">
+          <StaggerText
+            tag="p"
+            className="font-semibold text-xs tracking-widest uppercase mb-8"
+            style={{ color: '#AAFF00' }}
+          >
+            ✦ 소개
+          </StaggerText>
+          <FadeInOnScroll delay={200}>
+            <p className="font-normal text-base leading-8" style={{ color: 'rgba(255,255,255,0.78)' }}>
+              디지털인문예술 전공생으로, 포스터 디자인과
+              장서표(Ex Libris) 제작을 중심으로 시각 언어를 탐구합니다.
+              아날로그의 질감과 디지털의 정밀함을 결합하여
+              의미 있는 시각적 경험을 만들어갑니다.
+            </p>
+          </FadeInOnScroll>
+        </div>
 
-          <div className="space-y-14">
-            <div>
-              <h3 className="font-semibold text-xs uppercase tracking-widest mb-5">
-                소개
-              </h3>
-              <p className="font-normal text-base leading-8">
-                안녕하세요, 저는 박채빈입니다. 사용자 중심의 인터페이스를 설계하고
-                개발하는 것을 좋아합니다. 디자인의 감각과 개발의 논리를 함께 갖추어
-                더 나은 디지털 경험을 만들어가고 있습니다. 현재는 프론트엔드 개발과
-                UX 디자인을 병행하며 다양한 프로젝트에 참여하고 있습니다.
-                사람들이 불편함 없이 제품을 사용할 수 있도록, 작은 디테일까지
-                신경 쓰는 작업을 지향합니다.
-              </p>
+        <div className="relative z-10 mt-12">
+          <div className="w-10 h-px mb-4" style={{ backgroundColor: 'rgba(255,255,255,0.18)' }} />
+          <FadeInOnScroll delay={400}>
+            <p className="font-normal text-xs tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>
+              현재 미래융합스쿨 재학중
+            </p>
+          </FadeInOnScroll>
+        </div>
+      </div>
+
+      {/* Right panel — white */}
+      <div className="text-black md:w-7/12 px-10 md:px-14 py-20 flex flex-col gap-12" style={{ backgroundColor: '#F7F7F7' }}>
+        <div>
+          <StaggerText
+            tag="h3"
+            className="font-semibold text-xs uppercase tracking-widest mb-5 pb-3"
+            style={{ borderBottom: '1px solid #000000' }}
+          >
+            기본 정보
+          </StaggerText>
+          <FadeInOnScroll delay={150}>
+            <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+              {info.map(({ label, value }) => (
+                <div key={label}>
+                  <p className="font-semibold text-xs uppercase tracking-wider mb-1.5 text-black">
+                    {label}
+                  </p>
+                  <p className="font-normal text-sm text-black">{value}</p>
+                </div>
+              ))}
             </div>
+          </FadeInOnScroll>
+        </div>
 
-            <div>
-              <h3 className="font-semibold text-xs uppercase tracking-widest mb-5">
-                스택
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {skills.map((skill) => (
-                  <span
-                    key={skill}
-                    className="px-4 py-1.5 text-sm font-normal cursor-default transition-colors duration-200"
-                    style={{ border: '1px solid #000000' }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#f3a2e3'
-                      e.currentTarget.style.borderColor = '#f3a2e3'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'transparent'
-                      e.currentTarget.style.borderColor = '#000000'
-                    }}
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
+        <div>
+          <StaggerText
+            tag="h3"
+            className="font-semibold text-xs uppercase tracking-widest mb-5 pb-3"
+            style={{ borderBottom: '1px solid #000000' }}
+          >
+            스킬
+          </StaggerText>
+          <FadeInOnScroll delay={150}>
+            <div className="flex flex-wrap gap-2">
+              {skills.map((skill) => (
+                <span
+                  key={skill}
+                  className="px-4 py-1.5 text-xs font-normal text-black cursor-default transition-colors duration-200"
+                  style={{ border: '1px solid #000000' }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#AAFF00'
+                    e.currentTarget.style.borderColor = '#AAFF00'
+                    e.currentTarget.style.color = '#1A1A1A'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent'
+                    e.currentTarget.style.borderColor = '#000000'
+                    e.currentTarget.style.color = '#000000'
+                  }}
+                >
+                  {skill}
+                </span>
+              ))}
             </div>
-          </div>
-
-          <div className="space-y-14">
-            <div>
-              <h3 className="font-semibold text-xs uppercase tracking-widest mb-5">
-                경력
-              </h3>
-              <div className="space-y-0">
-                {experiences.map((exp, i) => (
-                  <div key={i} className="flex gap-4">
-                    <div className="flex flex-col items-center pt-1.5">
-                      <div
-                        className="w-2 h-2 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: '#000000' }}
-                      />
-                      {i < experiences.length - 1 && (
-                        <div
-                          className="w-px flex-1 my-1"
-                          style={{ backgroundColor: 'rgba(0,0,0,0.2)', minHeight: '2rem' }}
-                        />
-                      )}
-                    </div>
-                    <div className="pb-7">
-                      <p className="font-semibold text-base">{exp.role}</p>
-                      <p className="font-normal text-sm mt-0.5">{exp.org}</p>
-                      <p className="font-normal text-xs mt-1" style={{ color: 'rgba(0,0,0,0.45)' }}>
-                        {exp.date}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-xs uppercase tracking-widest mb-5">
-                수상
-              </h3>
-              <div className="space-y-5">
-                {awards.map((award, i) => (
-                  <div
-                    key={i}
-                    className="pl-4"
-                    style={{ borderLeft: '2px solid #f3a2e3' }}
-                  >
-                    <p className="font-semibold text-base">{award.name}</p>
-                    <p className="font-normal text-sm mt-0.5">{award.issuer}</p>
-                    <p
-                      className="font-normal text-xs mt-1"
-                      style={{ color: 'rgba(0,0,0,0.45)' }}
-                    >
-                      {award.year}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
+          </FadeInOnScroll>
         </div>
       </div>
     </section>

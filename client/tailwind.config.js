@@ -7,7 +7,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#f3a2e3',
+        primary: '#AAFF00',
+        dark: '#1C1C1C',
       },
       fontFamily: {
         sans: ['Pretendard', 'sans-serif'],
