@@ -16,7 +16,7 @@ const TILT_OFFS_Y = [20, -10, 30, -20, 15, -30, 10, -15]
 const DEG = Math.PI / 180
 
 /* ─── Detect video files by extension ─── */
-const isVideo = src => typeof src === 'string' && /\.mp4$/i.test(src)
+const isVideo = src => typeof src === 'string' && /\.(mp4|webm|mov)$/i.test(src)
 
 /* ─── Pure target calculator — lives outside component so rAF closure is stable ─── */
 function getTarget(i, view, rot, stageW, curRotY, n) {
@@ -117,7 +117,7 @@ function WorkCard({ project, setRef, setVideoRef, onEnter, onLeave, onClick }) {
   const { display, start, stop } = useScramble(project.title)
   const [imgError, setImgError]  = useState(false)
 
-  const firstSrc    = project.images?.[0]
+  const firstSrc     = project.images?.[0]
   const firstIsVideo = isVideo(firstSrc)
 
   return (
@@ -144,7 +144,7 @@ function WorkCard({ project, setRef, setVideoRef, onEnter, onLeave, onClick }) {
         userSelect:      'none',
       }}
     >
-      {/* Thumbnail area — real media when available, category text as fallback */}
+      {/* Thumbnail area */}
       <div
         style={{
           flex:            1,
@@ -168,13 +168,14 @@ function WorkCard({ project, setRef, setVideoRef, onEnter, onLeave, onClick }) {
               playsInline
               onError={() => { setImgError(true); if (setVideoRef) setVideoRef(null) }}
               style={{
-                position:  'absolute',
-                top:       0,
-                left:      0,
-                width:     '100%',
-                height:    '100%',
-                objectFit: 'cover',
-                display:   'block',
+                position:       'absolute',
+                top:            0,
+                left:           0,
+                width:          '100%',
+                height:         '100%',
+                objectFit:      'contain',
+                objectPosition: 'center',
+                display:        'block',
               }}
             />
           ) : (
@@ -183,13 +184,14 @@ function WorkCard({ project, setRef, setVideoRef, onEnter, onLeave, onClick }) {
               alt={project.title}
               onError={() => setImgError(true)}
               style={{
-                position:  'absolute',
-                top:       0,
-                left:      0,
-                width:     '100%',
-                height:    '100%',
-                objectFit: 'cover',
-                display:   'block',
+                position:       'absolute',
+                top:            0,
+                left:           0,
+                width:          '100%',
+                height:         '100%',
+                objectFit:      'contain',
+                objectPosition: 'center',
+                display:        'block',
               }}
             />
           )
@@ -252,6 +254,14 @@ function ProjectModal({ project, isClosing, onClose, onPrev, onNext }) {
 
   const currentSrc     = project.images?.[selectedThumb]
   const currentIsVideo = isVideo(currentSrc)
+
+  /* Explicit play() call — safeguard for browsers that ignore autoPlay on mount */
+  const modalVideoRef = useRef(null)
+  useEffect(() => {
+    if (currentIsVideo && modalVideoRef.current) {
+      modalVideoRef.current.play().catch(() => {})
+    }
+  }, [currentIsVideo, selectedThumb])
 
   const panelAnim = {
     opacity:    isClosing ? 0 : 1,
@@ -330,65 +340,124 @@ function ProjectModal({ project, isClosing, onClose, onPrev, onNext }) {
             overflow:        'hidden',
           }}
         >
-          {/* Main media — video or image, category text as fallback */}
+          {/* Main media — blurred backdrop fills the area, foreground artwork centered/uncropped */}
           <div
             style={{
-              flex:           1,
-              display:        'flex',
-              alignItems:     'center',
-              justifyContent: 'center',
-              position:       'relative',
-              minHeight:      isMobile ? '200px' : '360px',
-              overflow:       'hidden',
+              flex:            1,
+              position:        'relative',
+              minHeight:       isMobile ? '200px' : '360px',
+              overflow:        'hidden',
+              backgroundColor: '#1C1C1C',
             }}
           >
             {!mainImgError && currentSrc ? (
-              currentIsVideo ? (
-                <video
-                  key={selectedThumb}
-                  src={currentSrc}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  onError={() => setMainImgError(true)}
-                  style={{
-                    position:  'absolute',
-                    top:       0,
-                    left:      0,
-                    width:     '100%',
-                    height:    '100%',
-                    objectFit: 'cover',
-                    display:   'block',
-                  }}
-                />
-              ) : (
-                <img
-                  key={selectedThumb}
-                  src={currentSrc}
-                  alt={project.title}
-                  onError={() => setMainImgError(true)}
-                  style={{
-                    position:  'absolute',
-                    top:       0,
-                    left:      0,
-                    width:     '100%',
-                    height:    '100%',
-                    objectFit: 'cover',
-                    display:   'block',
-                  }}
-                />
-              )
+              <>
+                {/* Layer 1: blurred backdrop — same source, cover-fills the container */}
+                {currentIsVideo ? (
+                  <video
+                    key={`backdrop-${selectedThumb}`}
+                    src={currentSrc}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    aria-hidden="true"
+                    style={{
+                      position:  'absolute',
+                      top:       0,
+                      left:      0,
+                      width:     '100%',
+                      height:    '100%',
+                      objectFit: 'cover',
+                      filter:    'blur(40px) saturate(1.2)',
+                      transform: 'scale(1.15)',
+                      opacity:   0.6,
+                      display:   'block',
+                    }}
+                  />
+                ) : (
+                  <img
+                    key={`backdrop-${selectedThumb}`}
+                    src={currentSrc}
+                    aria-hidden="true"
+                    style={{
+                      position:  'absolute',
+                      top:       0,
+                      left:      0,
+                      width:     '100%',
+                      height:    '100%',
+                      objectFit: 'cover',
+                      filter:    'blur(40px) saturate(1.2)',
+                      transform: 'scale(1.15)',
+                      opacity:   0.6,
+                      display:   'block',
+                    }}
+                  />
+                )}
+
+                {/* Layer 2: foreground artwork — uncropped, centered, drop shadow for separation */}
+                {currentIsVideo ? (
+                  <video
+                    ref={modalVideoRef}
+                    key={`fg-${selectedThumb}`}
+                    src={currentSrc}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    controls={false}
+                    onError={() => setMainImgError(true)}
+                    style={{
+                      position:  'absolute',
+                      top:       '50%',
+                      left:      '50%',
+                      transform: 'translate(-50%, -50%)',
+                      maxWidth:  '92%',
+                      maxHeight: '92%',
+                      width:     'auto',
+                      height:    'auto',
+                      objectFit: 'contain',
+                      filter:    'drop-shadow(0 8px 32px rgba(0,0,0,0.25))',
+                      display:   'block',
+                    }}
+                  />
+                ) : (
+                  <img
+                    key={`fg-${selectedThumb}`}
+                    src={currentSrc}
+                    alt={project.title}
+                    onError={() => setMainImgError(true)}
+                    style={{
+                      position:  'absolute',
+                      top:       '50%',
+                      left:      '50%',
+                      transform: 'translate(-50%, -50%)',
+                      maxWidth:  '92%',
+                      maxHeight: '92%',
+                      width:     'auto',
+                      height:    'auto',
+                      objectFit: 'contain',
+                      filter:    'drop-shadow(0 8px 32px rgba(0,0,0,0.25))',
+                      display:   'block',
+                    }}
+                  />
+                )}
+              </>
             ) : (
               <span
                 style={{
+                  position:      'absolute',
+                  top:           '50%',
+                  left:          '50%',
+                  transform:     'translate(-50%, -50%)',
                   fontWeight:    700,
                   fontSize:      isMobile ? '2rem' : '3rem',
-                  color:         '#1A1A1A',
+                  color:         '#F7F7F7',
                   opacity:       0.18,
                   letterSpacing: '-0.02em',
                   userSelect:    'none',
                   pointerEvents: 'none',
+                  whiteSpace:    'nowrap',
                 }}
               >
                 {project.category}
@@ -401,9 +470,10 @@ function ProjectModal({ project, isClosing, onClose, onPrev, onNext }) {
                 position:           'absolute',
                 bottom:             '12px',
                 right:              '12px',
+                zIndex:             10,
                 fontSize:           '0.6rem',
                 fontWeight:         600,
-                color:              'rgba(26,26,26,0.45)',
+                color:              'rgba(247,247,247,0.7)',
                 letterSpacing:      '0.06em',
                 fontVariantNumeric: 'tabular-nums',
               }}
@@ -449,8 +519,6 @@ function ProjectModal({ project, isClosing, onClose, onPrev, onNext }) {
                     }}
                   >
                     {thumbIsVideo ? (
-                      /* Video thumbnail: dark background with centered ▶ and
-                         a small corner indicator */
                       <>
                         <div
                           style={{
@@ -461,10 +529,10 @@ function ProjectModal({ project, isClosing, onClose, onPrev, onNext }) {
                         />
                         <span
                           style={{
-                            position:  'relative',
-                            zIndex:    1,
-                            fontSize:  '1.1rem',
-                            color:     '#AAFF00',
+                            position:   'relative',
+                            zIndex:     1,
+                            fontSize:   '1.1rem',
+                            color:      '#AAFF00',
                             lineHeight: 1,
                           }}
                         >
@@ -500,6 +568,7 @@ function ProjectModal({ project, isClosing, onClose, onPrev, onNext }) {
             flexDirection: 'column',
             gap:           '16px',
             minWidth:      0,
+            overflowY:     'auto',
           }}
         >
           {/* Category tag */}
@@ -533,11 +602,38 @@ function ProjectModal({ project, isClosing, onClose, onPrev, onNext }) {
                 marginTop:       '-8px',
               }}
             >
-              ✦ {project.award}
+              {project.award.startsWith('✦') ? project.award : `✦ ${project.award}`}
             </div>
           )}
 
-          {/* Title — GlitchText triggers on mount and on hover */}
+          {/* Series indicator — shown only when project.series exists */}
+          {project.series && (
+            <div style={{ marginTop: '-4px' }}>
+              <span
+                style={{
+                  fontWeight:    600,
+                  fontSize:      '0.62rem',
+                  color:         '#8C8C8C',
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  marginRight:   '8px',
+                }}
+              >
+                SERIES
+              </span>
+              <span
+                style={{
+                  fontWeight: 600,
+                  fontSize:   '0.875rem',
+                  color:      '#1A1A1A',
+                }}
+              >
+                {project.series}
+              </span>
+            </div>
+          )}
+
+          {/* Title */}
           <GlitchText
             tag="h2"
             style={{
@@ -574,16 +670,43 @@ function ProjectModal({ project, isClosing, onClose, onPrev, onNext }) {
               fontSize:   '0.875rem',
               color:      '#1A1A1A',
               lineHeight: 1.85,
-              flex:       1,
-              minHeight:  0,
             }}
           >
             {project.description}
           </p>
 
-          {/* Process — shown only when project.process exists */}
+          {/* About the series */}
+          {project.seriesDescription && (
+            <div style={{ marginTop: '8px' }}>
+              <p
+                style={{
+                  fontWeight:    600,
+                  fontSize:      '0.62rem',
+                  color:         '#8C8C8C',
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  marginBottom:  '8px',
+                }}
+              >
+                ABOUT THE SERIES
+              </p>
+              <p
+                style={{
+                  fontWeight: 400,
+                  fontSize:   '0.875rem',
+                  color:      '#1A1A1A',
+                  lineHeight: 1.85,
+                  opacity:    0.8,
+                }}
+              >
+                {project.seriesDescription}
+              </p>
+            </div>
+          )}
+
+          {/* Process */}
           {project.process && (
-            <div style={{ marginTop: '16px' }}>
+            <div style={{ marginTop: '8px' }}>
               <p
                 style={{
                   fontWeight:    600,
@@ -610,39 +733,76 @@ function ProjectModal({ project, isClosing, onClose, onPrev, onNext }) {
             </div>
           )}
 
-          {/* Tools */}
-          <div>
-            <p
-              style={{
-                fontWeight:    600,
-                fontSize:      '0.62rem',
-                color:         '#8C8C8C',
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                marginBottom:  '8px',
-              }}
-            >
-              TOOLS
-            </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-              {project.tools.map(tool => (
-                <span
-                  key={tool}
-                  style={{
-                    border:        '1px solid #1A1A1A',
-                    padding:       '3px 10px',
-                    fontSize:      '0.65rem',
-                    fontWeight:    400,
-                    color:         '#1A1A1A',
-                    letterSpacing: '0.02em',
-                    whiteSpace:    'nowrap',
-                  }}
-                >
-                  {tool}
-                </span>
-              ))}
+          {/* Tools — hidden when tools array is empty */}
+          {project.tools && project.tools.length > 0 && (
+            <div>
+              <p
+                style={{
+                  fontWeight:    600,
+                  fontSize:      '0.62rem',
+                  color:         '#8C8C8C',
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  marginBottom:  '8px',
+                }}
+              >
+                TOOLS
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                {project.tools.map(tool => (
+                  <span
+                    key={tool}
+                    style={{
+                      border:        '1px solid #1A1A1A',
+                      padding:       '3px 10px',
+                      fontSize:      '0.65rem',
+                      fontWeight:    400,
+                      color:         '#1A1A1A',
+                      letterSpacing: '0.02em',
+                      whiteSpace:    'nowrap',
+                    }}
+                  >
+                    {tool}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* External link */}
+          {project.link && (
+            <div>
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onMouseEnter={e => {
+                  e.currentTarget.style.backgroundColor = '#AAFF00'
+                  e.currentTarget.style.borderColor     = '#AAFF00'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.backgroundColor = 'transparent'
+                  e.currentTarget.style.borderColor     = '#1A1A1A'
+                }}
+                style={{
+                  display:        'inline-block',
+                  border:         '1px solid #1A1A1A',
+                  padding:        '8px 16px',
+                  borderRadius:   '4px',
+                  fontWeight:     600,
+                  fontSize:       '0.875rem',
+                  color:          '#1A1A1A',
+                  textDecoration: 'none',
+                  transition:     'background-color 150ms ease, border-color 150ms ease',
+                  fontFamily:     'inherit',
+                  letterSpacing:  '0.02em',
+                  cursor:         'pointer',
+                }}
+              >
+                {project.linkLabel || '웹사이트'} ↗
+              </a>
+            </div>
+          )}
 
           {/* Navigation row */}
           <div
@@ -716,34 +876,43 @@ function ProjectModal({ project, isClosing, onClose, onPrev, onNext }) {
 
 /* ─── Work — main section ─── */
 export default function Work() {
-  const [activeView, setActiveView]   = useState('RING')
-  const [currentCard, setCurrentCard] = useState(1)
+  const [activeView, setActiveView]         = useState('RING')
+  const [currentCard, setCurrentCard]       = useState(1)
+  const [showScrollHint, setShowScrollHint] = useState(false)
+  const [isMobileHint,   setIsMobileHint]   = useState(false)
 
   /* ── Modal state ── */
   const [selectedProject, setSelectedProject] = useState(null)
   const [isModalClosing,  setIsModalClosing]  = useState(false)
 
   /* ── Stable refs for rAF loop ── */
-  const stageRef       = useRef(null)
-  const cardEls        = useRef(new Array(projects.length).fill(null))
-  const videoEls       = useRef(new Array(projects.length).fill(null))
-  const rafRef         = useRef(null)
-  const rotRef         = useRef(0)
-  const activeViewRef  = useRef('RING')
-  const mouseRef       = useRef({ x: 0, y: 0, inside: false })
-  const hovRef         = useRef(-1)
-  const frontRef       = useRef(1)
-  const isPausedRef    = useRef(false)
-  const selProjRef     = useRef(null)
-  const pushOff        = useRef(Array.from({ length: projects.length }, () => ({ x: 0, y: 0 })))
-  const curPos         = useRef(
+  const stageRef          = useRef(null)
+  const cardEls           = useRef(new Array(projects.length).fill(null))
+  const videoEls          = useRef(new Array(projects.length).fill(null))
+  const rafRef            = useRef(null)
+  const rotRef            = useRef(0)
+  const activeViewRef     = useRef('RING')
+  const mouseRef          = useRef({ x: 0, y: 0, inside: false })
+  const hovRef            = useRef(-1)
+  const frontRef          = useRef(1)
+  const isPausedRef       = useRef(false)
+  const selProjRef        = useRef(null)
+  const scrollXRef        = useRef(0)           // actual (lerped) horizontal scroll offset
+  const targetScrollXRef  = useRef(0)           // target offset driven by wheel / touch
+  const pushOff           = useRef(Array.from({ length: projects.length }, () => ({ x: 0, y: 0 })))
+  const curPos            = useRef(
     Array.from({ length: projects.length }, () => ({
       x: 0, y: 0, z: 0, rotY: 0, rotZ: 0, rotX: 0, scale: 0.9, opacity: 0,
     }))
   )
 
-  useEffect(() => { activeViewRef.current = activeView }, [activeView])
-  useEffect(() => { selProjRef.current    = selectedProject }, [selectedProject])
+  /* Sync activeViewRef and reset scroll when switching modes */
+  useEffect(() => {
+    activeViewRef.current      = activeView
+    targetScrollXRef.current   = 0
+  }, [activeView])
+
+  useEffect(() => { selProjRef.current = selectedProject }, [selectedProject])
 
   /* ── Modal open / close / navigate ── */
   const openModal = (project) => {
@@ -788,14 +957,44 @@ export default function Work() {
     return () => window.removeEventListener('keydown', onKey)
   }, [closeModal, goNext, goPrev])
 
+  /* ── Wheel → horizontal scroll (non-passive so we can preventDefault) ── */
+  useEffect(() => {
+    const el = stageRef.current
+    if (!el) return
+    const onWheel = (e) => {
+      e.preventDefault()
+      targetScrollXRef.current += e.deltaY * 0.8
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+    return () => el.removeEventListener('wheel', onWheel)
+  }, [])
+
+  /* ── Scroll hint: show when TILT cards overflow the stage width ── */
+  useEffect(() => {
+    const check = () => {
+      const el = stageRef.current
+      if (!el) return
+      const sw  = el.clientWidth
+      const mob = sw < 600
+      const sp  = (mob ? 110 : CW) + (mob ? 14 : 24)
+      setShowScrollHint(projects.length * sp > sw)
+      setIsMobileHint(mob)
+    }
+    check()
+    const ro = new ResizeObserver(check)
+    if (stageRef.current) ro.observe(stageRef.current)
+    return () => ro.disconnect()
+  }, [])
+
   /* ── Single rAF loop ── */
   useEffect(() => {
-    const PUSH_R  = 220
-    const PUSH_S  = 70
-    const PL      = 0.12
-    const LP      = 0.10
-    const ROT_SPD = 0.15
-    const n       = projects.length
+    const PUSH_R    = 220
+    const PUSH_S    = 70
+    const PL        = 0.12
+    const LP        = 0.10
+    const SCROLL_LP = 0.12
+    const ROT_SPD   = 0.15
+    const n         = projects.length
 
     const tick = () => {
       if (!isPausedRef.current) {
@@ -805,11 +1004,24 @@ export default function Work() {
       const stage = stageRef.current
       if (!stage) { rafRef.current = requestAnimationFrame(tick); return }
 
-      const sw    = stage.clientWidth
-      const sh    = stage.clientHeight
-      const view  = activeViewRef.current
-      const rot   = rotRef.current
+      const sw   = stage.clientWidth
+      const sh   = stage.clientHeight
+      const view = activeViewRef.current
+      const rot  = rotRef.current
       const mouse = mouseRef.current
+
+      /* ── Horizontal scroll — active only in TILT mode ── */
+      if (view === 'TILT') {
+        const mob       = sw < 600
+        const sp        = (mob ? 110 : CW) + (mob ? 14 : 24)
+        const maxScroll = Math.max(0, (n * sp) / 2 - sw / 2 + sp / 2)
+        targetScrollXRef.current = Math.max(-maxScroll, Math.min(maxScroll, targetScrollXRef.current))
+      } else {
+        /* Gently push target back to 0 so it's ready when re-entering TILT */
+        targetScrollXRef.current *= 0.85
+      }
+      scrollXRef.current += (targetScrollXRef.current - scrollXRef.current) * SCROLL_LP
+      const scrollX = view === 'TILT' ? scrollXRef.current : 0
 
       const mX = (!isPausedRef.current && mouse.inside) ? mouse.x - sw / 2 : -99999
       const mY = (!isPausedRef.current && mouse.inside) ? mouse.y - sh / 2 : -99999
@@ -825,8 +1037,11 @@ export default function Work() {
         const t  = getTarget(i, view, rot, sw, c.rotY, n)
         const po = pushOff.current[i]
 
-        const approxX = t.x + po.x
-        const approxY = t.y + po.y
+        /* Apply scroll offset to target x */
+        const tx = t.x - scrollX
+
+        const approxX = tx + po.x
+        const approxY = t.y  + po.y
         const dx      = approxX - mX
         const dy      = approxY - mY
         const dist    = Math.sqrt(dx * dx + dy * dy)
@@ -839,7 +1054,7 @@ export default function Work() {
         po.x += (tpx - po.x) * PL
         po.y += (tpy - po.y) * PL
 
-        const fx = t.x + po.x
+        const fx = tx + po.x
         const fy = t.y + po.y
 
         c.x       += (fx        - c.x)       * LP
@@ -875,7 +1090,12 @@ export default function Work() {
         el.style.outlineOffset = '-2px'
         el.style.boxShadow     = hov ? '0 8px 40px rgba(0,0,0,0.14)' : 'none'
 
-        if (t.depth > maxDep) { maxDep = t.depth; frontIdx = i }
+        /* Front detection: in TILT use adjusted-x proximity to center,
+           in other modes use depth from getTarget */
+        const depthForFront = view === 'TILT'
+          ? Math.max(0, 1 - Math.abs(tx) / Math.max(sw * 0.5, 1))
+          : t.depth
+        if (depthForFront > maxDep) { maxDep = depthForFront; frontIdx = i }
       }
 
       const next = frontIdx + 1
@@ -884,8 +1104,7 @@ export default function Work() {
         setCurrentCard(next)
       }
 
-      /* Video play/pause: only the front card and hovered card play.
-         All gallery videos pause when the modal is open (isPausedRef). */
+      /* Video play/pause: front card and hovered card only; all pause when modal open */
       for (let i = 0; i < n; i++) {
         const vEl = videoEls.current[i]
         if (!vEl) continue
@@ -904,7 +1123,7 @@ export default function Work() {
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) }
   }, [])
 
-  /* ── Stage event handlers ── */
+  /* ── Stage mouse event handlers ── */
   const handleMouseMove = (e) => {
     const rect = stageRef.current?.getBoundingClientRect()
     if (!rect) return
@@ -914,20 +1133,30 @@ export default function Work() {
     mouseRef.current = { ...mouseRef.current, inside: false }
   }
 
+  /* ── Touch handlers — TILT mode scrolls, all other modes rotate ── */
   const touchStartRef = useRef(null)
   const handleTouchStart = (e) => {
-    touchStartRef.current = { x: e.touches[0].clientX, rot: rotRef.current }
+    touchStartRef.current = {
+      x:       e.touches[0].clientX,
+      rot:     rotRef.current,
+      scrollX: targetScrollXRef.current,
+    }
   }
   const handleTouchMove = (e) => {
     if (!touchStartRef.current) return
     const dx = e.touches[0].clientX - touchStartRef.current.x
-    rotRef.current = touchStartRef.current.rot + dx * 0.35
+    if (activeViewRef.current === 'TILT') {
+      targetScrollXRef.current = touchStartRef.current.scrollX - dx * 1.2
+    } else {
+      rotRef.current = touchStartRef.current.rot + dx * 0.35
+    }
   }
   const handleTouchEnd = () => { touchStartRef.current = null }
 
   return (
     <section
       id="work"
+      className="section-padding"
       style={{
         position:        'relative',
         backgroundColor: '#1C1C1C',
@@ -937,7 +1166,8 @@ export default function Work() {
         display:         'flex',
         flexDirection:   'column',
         justifyContent:  'center',
-        padding:         '32px',
+        paddingTop:      '32px',
+        paddingBottom:   '32px',
         boxSizing:       'border-box',
       }}
     >
@@ -1017,7 +1247,7 @@ export default function Work() {
           />
         ))}
 
-        {/* Bottom bar — counter adapts to projects.length */}
+        {/* Bottom bar */}
         <div
           style={{
             position:       'absolute',
@@ -1031,17 +1261,39 @@ export default function Work() {
             gap:            '8px',
           }}
         >
-          <p
-            style={{
-              fontWeight:    400,
-              fontSize:      '0.75rem',
-              color:         'rgba(26,26,26,0.6)',
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-            }}
-          >
-            SCROLL TO EXPLORE →
-          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <p
+              style={{
+                fontWeight:    400,
+                fontSize:      '0.75rem',
+                color:         'rgba(26,26,26,0.6)',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                margin:        0,
+              }}
+            >
+              SCROLL TO EXPLORE →
+            </p>
+            {showScrollHint && activeView === 'TILT' && (
+              <p
+                style={{
+                  display:       'flex',
+                  alignItems:    'center',
+                  gap:           '6px',
+                  fontWeight:    400,
+                  fontSize:      '0.68rem',
+                  color:         '#8C8C8C',
+                  letterSpacing: '0.12em',
+                  margin:        0,
+                }}
+              >
+                <span style={{ animation: 'scroll-hint-sway 1.8s ease-in-out infinite', display: 'inline-block', fontSize: '12px', lineHeight: 1, verticalAlign: 'middle' }}>
+                  ↔
+                </span>
+                {isMobileHint ? '좌우로 스와이프' : '마우스 휠로 좌우 탐색'}
+              </p>
+            )}
+          </div>
           <p
             style={{
               fontWeight:         600,

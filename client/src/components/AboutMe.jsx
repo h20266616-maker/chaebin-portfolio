@@ -36,13 +36,13 @@ const TERMINAL_LINES = [
 */
 const KEYWORDS = [
   { text: '박채빈',           weight: 800, size: '3.75rem', mobileSize: '1.875rem',
-    color: '#AAFF00', left: '40%', top: '4%', mobileLeft: '32%', mobileTop: '3%',
+    color: '#AAFF00', left: '40%', top: '13%', mobileLeft: '32%', mobileTop: '13%',
     delay: 200 },
   { text: 'AI',              weight: 800, size: '3.75rem', mobileSize: '2rem',
-    color: '#AAFF00', left: '80%', top: '8%', mobileLeft: '72%', mobileTop: '12%',
+    color: '#AAFF00', left: '80%', top: '13%', mobileLeft: '72%', mobileTop: '14%',
     delay: 600 },
   { text: '26학번',           weight: 800, size: '2.25rem', mobileSize: '1.375rem',
-    color: '#AAFF00', left: '4%',  top: '8%', mobileLeft: '3%',  mobileTop: '12%',
+    color: '#AAFF00', left: '4%',  top: '15%', mobileLeft: '3%',  mobileTop: '14%',
     delay: 1000 },
   { text: 'design',          weight: 800, size: '3rem',    mobileSize: '1.75rem',
     color: '#F7F7F7', left: '4%',  top: '44%', mobileLeft: '3%', mobileTop: '83%',
@@ -108,9 +108,13 @@ function TypewriterText({ text, delay = 0, style, active = true }) {
 export default function AboutMe() {
   const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0
 
-  const sw          = window.innerWidth
-  const photoWidth  = sw < 768 ? '240px' : '360px'
-  const photoHeight = sw < 768 ? '320px' : '480px'
+  const sw = window.innerWidth
+
+  /* Scale with viewport HEIGHT so the photo never overflows on short/wide screens.
+     Ratio is 3:4 (width:height). Clamp prevents the photo from being
+     too small on desktop or too large on portrait-phone viewports. */
+  const photoWidth  = 'clamp(200px, 30vh, 360px)'
+  const photoHeight = 'clamp(266px, 40vh, 480px)'
 
   const [revealed, setRevealed]                 = useState(false)
   const [terminalLines, setTerminalLines]       = useState([])

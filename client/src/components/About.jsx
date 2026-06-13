@@ -65,20 +65,20 @@ export default function About() {
     >
       {/* Left panel — dark */}
       <div
-        className="text-white md:w-5/12 px-10 md:px-14 py-20 relative overflow-hidden flex flex-col justify-between min-h-80 md:min-h-screen"
+        className="text-white md:w-5/12 section-padding py-20 relative overflow-hidden flex flex-col justify-between min-h-80 md:min-h-screen"
         style={{ backgroundColor: '#1C1C1C' }}
       >
         <div
           className="absolute font-extrabold pointer-events-none select-none leading-none"
           style={{
-            fontSize:     'clamp(80px, 10vw, 160px)',
-            color:        '#ffffff',
-            opacity:      0.18,
-            writingMode:  'vertical-rl',
-            transform:    'rotate(180deg)',
-            right:        '-0.05em',
-            top:          '50%',
-            marginTop:    '-2em',
+            fontSize:      'clamp(80px, 10vw, 160px)',
+            color:         '#ffffff',
+            opacity:       0.18,
+            writingMode:   'vertical-rl',
+            transform:     'rotate(180deg)',
+            right:         '-0.05em',
+            top:           '50%',
+            marginTop:     '-2em',
             letterSpacing: '-0.05em',
           }}
         >
@@ -115,7 +115,7 @@ export default function About() {
 
       {/* Right panel — light */}
       <div
-        className="text-black md:w-7/12 px-10 md:px-14 py-20 flex flex-col gap-12"
+        className="text-black md:w-7/12 section-padding py-20 flex flex-col gap-12 md:min-h-screen"
         style={{ backgroundColor: '#F7F7F7' }}
       >
         <div>

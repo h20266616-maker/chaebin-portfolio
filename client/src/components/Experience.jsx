@@ -165,7 +165,7 @@ export default function Experience() {
   return (
     <section
       id="experience"
-      className="py-24 relative overflow-hidden"
+      className="py-24 relative overflow-x-hidden"
       style={{
         backgroundColor: '#EBEBEB',
         color:           '#1A1A1A',
@@ -174,7 +174,8 @@ export default function Experience() {
         minHeight:       '100vh',
       }}
     >
-      <div className="px-6 md:px-12 mb-16">
+      {/* EXPERIENCE heading — intentional bleed, section-padding aligns left edge */}
+      <div className="section-container section-padding mb-16">
         <StaggerText
           tag="h2"
           className="font-extrabold text-black leading-none tracking-tighter"
@@ -184,7 +185,7 @@ export default function Experience() {
         </StaggerText>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 md:px-14">
+      <div className="section-container section-padding">
         <div className="grid md:grid-cols-2 gap-14 md:gap-20">
           <div>
             <StaggerText

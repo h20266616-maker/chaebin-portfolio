@@ -11,18 +11,22 @@ export const projects = [
       'AI 툴은 Claude(Anthropic), ChatGPT(OpenAI), Flow(이미지 생성)를 활용했으며, 학생은 초기 콘셉트 기획과 지문을 모티프로 한 배경 조형 언어 설계, 와이어프레임 오브제 선택, 컬러 팔레트 및 타이포그래피 디렉팅, 포스터 레이아웃 전반을 이끌었습니다.',
     tools: ['Claude', 'ChatGPT', 'Flow'],
     images: [
+      '/images/work/project-01-1.jpg.gif',
       '/images/work/project-01-1.jpg',
       '/images/work/project-01-loop.mp4',
     ],
   },
   {
     id: 2,
-    title: '장서표 01',
+    title: '빛이 되는 이야기',
     category: 'EX LIBRIS',
     year: '2026',
+    award: '✦ 2026 강원과 함께 하는 도서관 - 장서표 디자인 공모전 출품작',
     description:
-      '개인 소장 도서를 위한 장서표 시리즈의 첫 번째 작품입니다. 전통적인 장서표 형식에 현대적인 타이포그래피를 접목하여, 소유자의 정체성을 상징하는 요소들로 구성했습니다. 한글 서체와 기하학적 문양을 결합한 독창적인 시각 언어를 개발했습니다.',
-    tools: ['Illustrator', 'Claude'],
+      '강원도 인제의 자연 속에 자리한 기적의 도서관을 아침과 밤, 두 가지 시간의 빛으로 담았습니다. 책에서 피어오르는 별빛 궤적은 독서가 곧 빛이 되어 세상을 비춘다는 메시지를 시각화한 것입니다. 이 장서표를 통해 책 한 권이 누군가에게 기적의 시작이 되기를 바랍니다.',
+    process:
+      'Claude와 ChatGPT의 이미지 생성 기능을 활용하여 일러스트를 제작하고, 컬러 조정·타이포·전체 구성은 직접 디자인했습니다.',
+    tools: ['Claude', 'ChatGPT', 'Illustrator'],
     images: [
       '/images/work/project-02-1.jpg',
       '/images/work/project-02-2.jpg',
@@ -30,81 +34,133 @@ export const projects = [
   },
   {
     id: 3,
-    title: '포스터 디자인 02',
-    category: 'POSTER DESIGN',
-    year: '2026',
+    title: '기적의 비상(飛翔)',
+    category: 'EX LIBRIS',
+    year: '2026-1학기',
+    award: '✦ 2026 강원과 함께 하는 도서관 - 장서표 디자인 공모전 출품작',
     description:
-      '전시 홍보를 위한 실험적 포스터 작업입니다. 레이어드 텍스트와 기하학적 형태를 조합하여 시각적 긴장감을 만들었으며, AI 도구를 활용한 생성 이미지가 포함되어 있습니다. 디지털 인문학적 관점에서 인간과 기계의 협업을 시각화했습니다.',
-    tools: ['Illustrator', 'Claude Code', 'Photoshop'],
+      '인제의 산맥 위를 가로지르는 두 마리 학이 별을 향해 날아오릅니다. 발아래에는 강원의 야생화가 피어나고, 펼쳐진 책에서는 빛이 솟아오릅니다. 학의 자유로운 비상처럼, 책 속의 지식도 경계 없이 뻗어나가기를 — 인제 기적의 도서관이 그 날갯짓의 출발점이 되기를 바라는 마음을 담았습니다. 빈티지 에칭 기법의 감성으로, 도서관의 고전적 가치와 인제 자연의 아름다움을 한 장에 새겼습니다.',
+    process:
+      'ChatGPT 이미지 생성 기능을 활용하여 에칭 스타일 일러스트를 제작하고, 직접 구성 편집·타이포그래피 배치 및 작품 콘셉트 스토리 창작을 진행했습니다.',
+    tools: ['ChatGPT', 'Illustrator'],
     images: [
       '/images/work/project-03-1.jpg',
-      '/images/work/project-03-2.jpg',
     ],
   },
   {
     id: 4,
-    title: '장서표 02',
+    title: '고요한 기적',
     category: 'EX LIBRIS',
     year: '2026',
+    award: '2026 강원과 함께 하는 도서관 - 장서표 디자인 공모전 최우수상',
     description:
-      '가족을 위한 맞춤 장서표 제작 프로젝트입니다. 한글 캘리그래피와 현대적 레이아웃의 조화를 탐구했으며, Blender로 제작한 3D 요소가 포함되어 있습니다. 아날로그 질감과 디지털 정밀함을 결합한 하이브리드 접근법을 시도했습니다.',
-    tools: ['Illustrator', 'Blender', 'Figma'],
+      '소란스럽지 않게, 그러나 분명하게 — 인제 기적의 도서관은 오늘도 조용히 빛납니다. 산과 숲, 꽃과 별빛 사이에 고요히 자리한 도서관의 풍경을 빈티지 에칭 기법으로 담았습니다. 책 한 권을 펼치는 작고 고요한 순간이 누군가에게 가장 큰 기적이 되기를 바라는 마음을 이 장서표에 새겼습니다.',
+    process:
+      'ChatGPT 이미지 생성 기능을 활용하여 에칭 스타일 일러스트를 제작하고, 직접 구성 편집·타이포그래피 배치 및 작품 콘셉트 스토리 창작을 진행했습니다.',
+    tools: ['ChatGPT', 'Illustrator'],
     images: [
       '/images/work/project-04-1.jpg',
-      '/images/work/project-04-2.jpg',
-      '/images/work/project-04-3.jpg',
     ],
   },
   {
     id: 5,
-    title: '포스터 디자인 03',
-    category: 'POSTER DESIGN',
+    title: '달빛 아래의 서재',
+    category: 'EX LIBRIS',
     year: '2026',
+    award: '✦ 2026 강원과 함께 하는 도서관 - 장서표 디자인 공모전 출품작',
     description:
-      '디지털 매체에 특화된 포스터 시리즈입니다. 동적 요소와 정적 그래픽 사이의 경계를 시각화하였으며, 화면 해상도와 인쇄 품질을 동시에 고려한 설계입니다. 미래융합스쿨의 학제간 특성을 반영한 비주얼 언어를 실험했습니다.',
-    tools: ['Illustrator', 'Figma', 'Photoshop'],
+      '초승달이 뜨는 인제의 밤, 숲과 꽃 사이로 도서관이 조용히 빛납니다. 펼쳐진 책 한 권에서 피어오른 별빛 한 줄기가 달을 향해 고요히 이어지고, 나무들은 그 모든 풍경을 말없이 감쌉니다. 낮의 소란이 가라앉은 밤, 책과 함께하는 시간이 가장 빛나는 기적임을 초록빛 에칭 선각으로 담았습니다.',
+    process:
+      'ChatGPT 이미지 생성 기능을 활용하여 에칭 스타일 일러스트를 제작하고, 직접 구성 편집·타이포그래피 배치 및 작품 콘셉트 스토리 창작을 진행했습니다.',
+    tools: ['ChatGPT', 'Illustrator'],
     images: [
       '/images/work/project-05-1.jpg',
     ],
   },
   {
     id: 6,
-    title: '장서표 03',
+    title: '경계 없는 날갯짓',
     category: 'EX LIBRIS',
     year: '2026',
+    award: '✦ 2026 강원과 함께 하는 도서관 - 장서표 디자인 공모전 출품작',
     description:
-      '소규모 출판 프로젝트를 위한 장서표 디자인입니다. 식물 모티프를 재해석하여 현대적인 미감으로 표현했으며, 레이저 커팅 프린트 제작을 위한 정밀 벡터 작업입니다. 전통 공예와 디지털 제작 방식의 교차점을 탐색했습니다.',
-    tools: ['Illustrator', 'Figma'],
+      '자연과 우주, 지식의 세계는 원래 경계가 없습니다. 인제의 산맥과 야생화 위로 두 마리 학이 행성을 향해 거침없이 날아오르듯, 책 한 권을 펼치는 순간 우리의 상상도 어떤 한계도 넘어섭니다. 라임에서 보라로 물드는 생동감 넘치는 색감 속에 인제 기적의 도서관이 품은 무한한 가능성과 자유를 이 장서표에 담았습니다.',
+    process:
+      'ChatGPT 이미지 생성 기능을 활용하여 에칭 스타일 일러스트 및 그라데이션 배경을 제작하고, 직접 구성 편집·타이포그래피 배치 및 작품 콘셉트 스토리 창작을 진행했습니다.',
+    tools: ['ChatGPT', 'Illustrator'],
     images: [
       '/images/work/project-06-1.jpg',
-      '/images/work/project-06-2.jpg',
     ],
   },
   {
     id: 7,
-    title: '포스터 디자인 04',
-    category: 'POSTER DESIGN',
+    title: '여기서 피어납니다',
+    category: 'EX LIBRIS',
     year: '2026',
+    award: '✦ 2026 강원과 함께 하는 도서관 - 장서표 디자인 공모전 출품작',
+    series: '인제의 것들',
+    seriesDescription:
+      '인제를 대표하는 두 가지 자연 — 두루미와 곰배령 얼레지를 모티프로 한 장서표 시리즈입니다. 목판화 감성의 단색 일러스트와 굵은 타이포그래피로 인제 기적의 도서관의 정체성을 담백하게 담았으며, 등록번호·분류기호·등록일 기입란을 갖춰 실제 장서표로도 기능할 수 있도록 디자인했습니다.',
     description:
-      '교내 학술지 커버 디자인 제안 프로젝트입니다. 디지털 인문학을 주제로 인간과 기계의 관계를 시각화했으며, 미래융합스쿨의 정체성을 반영한 비주얼 언어를 개발했습니다. 학제간 융합의 가능성을 그래픽 언어로 번역하는 작업입니다.',
-    tools: ['Illustrator', 'Blender', 'Claude'],
+      '곰배령 고원에서만 만날 수 있는 얼레지 — 척박한 땅에서도 기어이 꽃을 피우는 그 야생화처럼, 지식도 어디서든 조용히 그러나 반드시 피어납니다. 보랏빛 꽃과 초록 잎을 목판화 기법으로 표현해 인제 자연의 소박하고 귀한 아름다움을 담았습니다. 이 장서표가 붙은 책 한 권이 누군가에게 얼레지처럼 작지만 소중한 기적이 되기를 바랍니다.',
+    process:
+      'ChatGPT 이미지 생성 기능을 활용하여 목판화 스타일 일러스트를 제작하고, 직접 타이포그래피 배치·레이아웃 구성 및 작품 콘셉트 스토리 창작을 진행했습니다.',
+    tools: ['ChatGPT', 'Illustrator'],
     images: [
       '/images/work/project-07-1.jpg',
-      '/images/work/project-07-2.jpg',
+    ],
+  },
+  {
+    id: 9,
+    title: '하동이와 함께하는 춘천 여름',
+    category: 'CHARACTER DESIGN',
+    year: '2026',
+    award: '✦ 26-1 DAH EXHIBITION 우수상',
+    series: '춘천 계절연구소',
+    seriesDescription:
+      '춘천 계절연구소: 하동이와 함께하는 중도 물레길 여행 — I-SO(아이소), 디인예 전공 동아리',
+    description:
+      "춘천의 여름을 상징하는 수달 가이드 '하동이'의 캐릭터 숍입니다. 춘천 명소를 생생한 3D 영상으로 투어하고, 하동이의 개성이 담긴 굿즈를 만나는 입체적인 디지털 경험을 제공합니다.",
+    tools: [],
+    link: 'https://chuncheon-sri.vercel.app/',
+    linkLabel: '웹사이트',
+    images: [
+      '/images/work/project-09-1.jpg',
     ],
   },
   {
     id: 8,
-    title: '장서표 04',
+    title: '더 멀리, 더 높이',
     category: 'EX LIBRIS',
     year: '2026',
+    award: '✦ 2026 강원과 함께 하는 도서관 - 장서표 디자인 공모전 출품작',
+    series: '인제의 것들',
+    seriesDescription:
+      '인제를 대표하는 두 가지 자연 — 두루미와 곰배령 얼레지를 모티프로 한 장서표 시리즈입니다. 목판화 감성의 단색 일러스트와 굵은 타이포그래피로 인제 기적의 도서관의 정체성을 담백하게 담았으며, 등록번호·분류기호·등록일 기입란을 갖춰 실제 장서표로도 기능할 수 있도록 디자인했습니다.',
     description:
-      '장서표 시리즈의 마지막 작품으로, 4년간의 학습과 성장을 상징하는 요소들로 구성했습니다. 한림대학교 미래융합스쿨의 정체성을 담아내며, 디지털과 아날로그, 전통과 혁신의 균형을 시각적으로 표현했습니다. 개인적 서사와 학문적 탐구를 장서표라는 형식 안에 압축했습니다.',
-    tools: ['Illustrator', 'Figma', 'Photoshop'],
+      '천연기념물 제203호, 두루미 — 인제의 하늘을 유유히 가로지르는 그 존재처럼, 책도 우리를 더 멀리, 더 높이 데려다줍니다. 목판화 감성의 굵고 담백한 선으로 두루미의 고결함을 담았으며, 실용적인 장서표 기능과 함께 인제 기적의 도서관만의 정체성을 한 장에 새겼습니다. 이 책을 펼치는 모든 이가 두루미의 날갯짓처럼 자유롭고 높이 날아오르기를 바랍니다.',
+    process:
+      'ChatGPT 이미지 생성 기능을 활용하여 목판화 스타일 일러스트를 제작하고, 직접 타이포그래피 배치·레이아웃 구성 및 작품 콘셉트 스토리 창작을 진행했습니다.',
+    tools: ['ChatGPT', 'Illustrator'],
     images: [
       '/images/work/project-08-1.jpg',
-      '/images/work/project-08-2.jpg',
-      '/images/work/project-08-3.jpg',
+    ],
+  },
+  {
+    id: 10,
+    title: 'SYNK',
+    category: 'UX/UI DESIGN',
+    year: '2026',
+    award: '✦ 디지털인문예술입문 팀 프로젝트',
+    series: 'Team SYNK',
+    seriesDescription: '디지털인문예술입문',
+    description:
+      '시각 정보를 음성과 촉각으로 번역해, 누구나 자신의 스타일과 취향을 독립적으로 표현할 수 있도록 돕는 서비스',
+    tools: [],
+    link: 'https://ffgi-q9r6.vercel.app/',
+    linkLabel: '웹사이트',
+    images: [
+      '/images/work/project-10-1.jpg',
     ],
   },
 ]

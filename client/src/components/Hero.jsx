@@ -40,8 +40,8 @@ export default function Hero() {
       <CRTOverlay />
 
       <div ref={contentRef} className="flex-1 flex flex-col justify-end">
-        {/* Oversized "PORTFOLIO" — bleeds off right edge */}
-        <div className="overflow-hidden px-6 md:px-12 mb-12">
+        {/* Oversized "PORTFOLIO" — bleeds off right edge intentionally */}
+        <div className="overflow-hidden section-container section-padding mb-12">
           <GlitchText
             className="font-extrabold text-white whitespace-nowrap leading-none tracking-tighter"
             style={{ fontSize: 'clamp(80px, 15vw, 240px)', display: 'block' }}
@@ -50,17 +50,20 @@ export default function Hero() {
           </GlitchText>
         </div>
 
-        {/* Two-column caption row */}
-        <div className="px-6 md:px-12 flex flex-col md:flex-row md:justify-between md:items-end gap-6 md:gap-0">
+        {/* Two-column caption row
+            w-full ensures this flex item stretches to full width inside the flex-col
+            parent — without it, section-container's margin:auto causes shrink-wrapping */}
+        <div className="section-container section-padding w-full flex flex-col md:flex-row md:justify-between md:items-end gap-6 md:gap-0">
 
           {/* LEFT COLUMN */}
-          <div>
+          <div className="flex flex-col">
             <div
               style={{
-                width: '40px',
-                height: '1px',
+                width:           '40px',
+                height:          '1px',
                 backgroundColor: '#AAFF00',
-                marginBottom: '12px',
+                marginBottom:    '12px',
+                flexShrink:      0,
               }}
             />
             <p className="text-sm tracking-widest" style={{ color: '#F7F7F7', opacity: 0.5 }}>
@@ -78,14 +81,14 @@ export default function Hero() {
           </div>
 
           {/* RIGHT COLUMN */}
-          <div className="md:text-right">
+          <div className="flex flex-col md:items-end md:text-right">
             <p
               className="text-lg font-semibold"
               style={{ color: '#F7F7F7', opacity: 0.8 }}
             >
               디지털인문예술
             </p>
-            <div style={{ marginTop: '20px' }}>
+            <div className="flex flex-col" style={{ marginTop: '20px' }}>
               <p
                 className="text-base font-normal"
                 style={{ color: '#F7F7F7', opacity: 0.6 }}
@@ -93,7 +96,7 @@ export default function Hero() {
                 디지털과 인문, 인간과 AI의 교차점에서
               </p>
               <p
-                className="text-2xl md:text-2xl font-bold"
+                className="text-xl md:text-2xl font-bold"
                 style={{ color: '#AAFF00', marginTop: '4px' }}
               >
                 이제 막 첫 페이지를 씁니다
@@ -105,10 +108,9 @@ export default function Hero() {
       </div>
 
       {/* Bottom rule */}
-      <div
-        className="mx-6 md:mx-12 mt-12"
-        style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}
-      />
+      <div className="section-container section-padding mt-12 w-full">
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }} />
+      </div>
     </section>
   )
 }

@@ -44,7 +44,7 @@ export default function Header() {
       className="fixed top-0 left-0 right-0 z-[100]"
       style={{ backgroundColor: '#F7F7F7', borderBottom: '1px solid #1A1A1A' }}
     >
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="section-container section-padding py-4 flex items-center justify-between">
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="text-black tracking-tighter flex items-baseline gap-1.5"
@@ -84,7 +84,7 @@ export default function Header() {
 
       {menuOpen && (
         <div
-          className="md:hidden px-6 py-5 flex flex-col gap-4"
+          className="md:hidden section-padding py-5 flex flex-col gap-4"
           style={{ backgroundColor: '#F7F7F7', borderTop: '1px solid #1A1A1A' }}
         >
           {navItems.map(({ label, id }) => (
