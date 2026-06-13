@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 @layer base {
+  html, body, #root {
+    background-color: #1C1C1C !important;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
   html {
     scroll-behavior: smooth;
     scroll-snap-type: y proximity;
@@ -11,7 +17,6 @@
   body {
     @apply font-sans;
     font-family: 'Pretendard', sans-serif;
-    background-color: #ffffff;
     color: #000000;
   }
   * {
@@ -67,7 +72,8 @@ button:active {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0; }
 }
-.blink { animation: blink 1s infinite; }
+.blink      { animation: blink 1s   infinite; }
+.blink-fast { animation: blink 0.3s infinite; }
 
 @keyframes pulse-label {
   0%, 100% { opacity: 0.6; }
@@ -101,3 +107,23 @@ button:active {
   50%       { opacity: 0.7; }
 }
 .scan-flicker { animation: scan-flicker 0.1s infinite; }
+
+@keyframes crt-dot {
+  from { transform: scale(0.2); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+@keyframes crt-line-h {
+  from { transform: scaleX(0.01); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes crt-line-v {
+  from { transform: scaleY(0.004); background-color: #F7F7F7; box-shadow: 0 0 12px rgba(170,255,0,0.6); }
+  to   { transform: scaleY(1);     background-color: #1C1C1C; box-shadow: 0 0 0px rgba(170,255,0,0); }
+}
+
+@keyframes boot-jitter {
+  0%, 100% { transform: translateX(0); }
+  50%       { transform: translateX(1px); }
+}

@@ -17,12 +17,14 @@ const skills = [
 ]
 
 const info = [
-  { label: '이름', value: '박채빈' },
-  { label: '소속', value: '미래융합스쿨 디지털인문예술' },
-  { label: '전공', value: '미래융합스쿨' },
+  { label: '이름',   value: '박채빈' },
+  { label: '소속',   value: '미래융합스쿨 디지털인문예술' },
+  { label: '전공',   value: '미래융합스쿨' },
   { label: '이메일', value: 'h20266616@glab.hallym.ac.kr' },
 ]
 
+/* Fades and slides content in when it enters the viewport.
+   Resets to hidden when it leaves so the animation replays on re-entry. */
 function FadeInOnScroll({ children, delay = 0 }) {
   const ref = useRef(null)
   const [visible, setVisible] = useState(false)
@@ -32,10 +34,7 @@ function FadeInOnScroll({ children, delay = 0 }) {
     if (!el) return
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true)
-          observer.disconnect()
-        }
+        setVisible(entry.isIntersecting)
       },
       { threshold: 0.1 }
     )
@@ -47,8 +46,8 @@ function FadeInOnScroll({ children, delay = 0 }) {
     <div
       ref={ref}
       style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(20px)',
+        opacity:    visible ? 1 : 0,
+        transform:  visible ? 'translateY(0)' : 'translateY(20px)',
         transition: `opacity 600ms ease-out ${delay}ms, transform 600ms ease-out ${delay}ms`,
       }}
     >
@@ -59,21 +58,27 @@ function FadeInOnScroll({ children, delay = 0 }) {
 
 export default function About() {
   return (
-    <section id="about" className="flex flex-col md:flex-row" style={{ scrollSnapAlign: 'start', scrollSnapStop: 'normal', minHeight: '100vh' }}>
-      {/* Left panel — black */}
-      <div className="text-white md:w-5/12 px-10 md:px-14 py-20 relative overflow-hidden flex flex-col justify-between min-h-80 md:min-h-screen" style={{ backgroundColor: '#1C1C1C' }}>
-        {/* Rotated decorative "ABOUT" */}
+    <section
+      id="about"
+      className="flex flex-col md:flex-row"
+      style={{ scrollSnapAlign: 'start', scrollSnapStop: 'normal', minHeight: '100vh' }}
+    >
+      {/* Left panel — dark */}
+      <div
+        className="text-white md:w-5/12 px-10 md:px-14 py-20 relative overflow-hidden flex flex-col justify-between min-h-80 md:min-h-screen"
+        style={{ backgroundColor: '#1C1C1C' }}
+      >
         <div
           className="absolute font-extrabold pointer-events-none select-none leading-none"
           style={{
-            fontSize: 'clamp(80px, 10vw, 160px)',
-            color: '#ffffff',
-            opacity: 0.18,
-            writingMode: 'vertical-rl',
-            transform: 'rotate(180deg)',
-            right: '-0.05em',
-            top: '50%',
-            marginTop: '-2em',
+            fontSize:     'clamp(80px, 10vw, 160px)',
+            color:        '#ffffff',
+            opacity:      0.18,
+            writingMode:  'vertical-rl',
+            transform:    'rotate(180deg)',
+            right:        '-0.05em',
+            top:          '50%',
+            marginTop:    '-2em',
             letterSpacing: '-0.05em',
           }}
         >
@@ -108,8 +113,11 @@ export default function About() {
         </div>
       </div>
 
-      {/* Right panel — white */}
-      <div className="text-black md:w-7/12 px-10 md:px-14 py-20 flex flex-col gap-12" style={{ backgroundColor: '#F7F7F7' }}>
+      {/* Right panel — light */}
+      <div
+        className="text-black md:w-7/12 px-10 md:px-14 py-20 flex flex-col gap-12"
+        style={{ backgroundColor: '#F7F7F7' }}
+      >
         <div>
           <StaggerText
             tag="h3"
@@ -149,13 +157,13 @@ export default function About() {
                   style={{ border: '1px solid #000000' }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = '#AAFF00'
-                    e.currentTarget.style.borderColor = '#AAFF00'
-                    e.currentTarget.style.color = '#1A1A1A'
+                    e.currentTarget.style.borderColor     = '#AAFF00'
+                    e.currentTarget.style.color           = '#1A1A1A'
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent'
-                    e.currentTarget.style.borderColor = '#000000'
-                    e.currentTarget.style.color = '#000000'
+                    e.currentTarget.style.borderColor     = '#000000'
+                    e.currentTarget.style.color           = '#000000'
                   }}
                 >
                   {skill}

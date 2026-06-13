@@ -1,116 +1,30 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useScramble } from '../hooks/useScramble'
 import GlitchText from './GlitchText'
+import { projects } from '../data/projects'
 
 /* ─── Gallery constants ─── */
 const VIEWS = ['FLAT', 'TILT', 'RING', 'GALLERY']
-const N     = 8
 const CW    = 160
 const CH    = Math.round(CW * (4 / 3))
 
-/* ─── Project data — expanded with modal detail fields ─── */
-const PROJECTS = [
-  {
-    num: 1,
-    title: '포스터 디자인 01',
-    category: 'POSTER DESIGN',
-    tag: 'POSTER',
-    year: '2026',
-    description:
-      '디지털인문예술 전공 프로젝트로 제작한 포스터입니다. 타이포그래피와 이미지의 균형을 실험한 작업으로, 모노크롬 팔레트를 중심으로 텍스트의 리듬감을 탐구했습니다. 인쇄 매체와 화면 매체 모두에 최적화된 해상도로 제작되었습니다.',
-    tools: ['Illustrator', 'Photoshop'],
-    images: ['ph1'],
-  },
-  {
-    num: 2,
-    title: '장서표 01',
-    category: 'EX LIBRIS',
-    tag: 'EX LIBRIS',
-    year: '2026',
-    description:
-      '개인 소장 도서를 위한 장서표 시리즈의 첫 번째 작품입니다. 전통적인 장서표 형식에 현대적인 타이포그래피를 접목하여, 소유자의 정체성을 상징하는 요소들로 구성했습니다. 한글 서체와 기하학적 문양을 결합한 독창적인 시각 언어를 개발했습니다.',
-    tools: ['Illustrator', 'Claude'],
-    images: ['ph1', 'ph2'],
-  },
-  {
-    num: 3,
-    title: '포스터 디자인 02',
-    category: 'POSTER DESIGN',
-    tag: 'POSTER',
-    year: '2026',
-    description:
-      '전시 홍보를 위한 실험적 포스터 작업입니다. 레이어드 텍스트와 기하학적 형태를 조합하여 시각적 긴장감을 만들었으며, AI 도구를 활용한 생성 이미지가 포함되어 있습니다. 디지털 인문학적 관점에서 인간과 기계의 협업을 시각화했습니다.',
-    tools: ['Illustrator', 'Claude Code', 'Photoshop'],
-    images: ['ph1', 'ph2'],
-  },
-  {
-    num: 4,
-    title: '장서표 02',
-    category: 'EX LIBRIS',
-    tag: 'EX LIBRIS',
-    year: '2026',
-    description:
-      '가족을 위한 맞춤 장서표 제작 프로젝트입니다. 한글 캘리그래피와 현대적 레이아웃의 조화를 탐구했으며, Blender로 제작한 3D 요소가 포함되어 있습니다. 아날로그 질감과 디지털 정밀함을 결합한 하이브리드 접근법을 시도했습니다.',
-    tools: ['Illustrator', 'Blender', 'Figma'],
-    images: ['ph1', 'ph2', 'ph3'],
-  },
-  {
-    num: 5,
-    title: '포스터 디자인 03',
-    category: 'POSTER DESIGN',
-    tag: 'POSTER',
-    year: '2026',
-    description:
-      '디지털 매체에 특화된 포스터 시리즈입니다. 동적 요소와 정적 그래픽 사이의 경계를 시각화하였으며, 화면 해상도와 인쇄 품질을 동시에 고려한 설계입니다. 미래융합스쿨의 학제간 특성을 반영한 비주얼 언어를 실험했습니다.',
-    tools: ['Illustrator', 'Figma', 'Photoshop'],
-    images: ['ph1'],
-  },
-  {
-    num: 6,
-    title: '장서표 03',
-    category: 'EX LIBRIS',
-    tag: 'EX LIBRIS',
-    year: '2026',
-    description:
-      '소규모 출판 프로젝트를 위한 장서표 디자인입니다. 식물 모티프를 재해석하여 현대적인 미감으로 표현했으며, 레이저 커팅 프린트 제작을 위한 정밀 벡터 작업입니다. 전통 공예와 디지털 제작 방식의 교차점을 탐색했습니다.',
-    tools: ['Illustrator', 'Figma'],
-    images: ['ph1', 'ph2'],
-  },
-  {
-    num: 7,
-    title: '포스터 디자인 04',
-    category: 'POSTER DESIGN',
-    tag: 'POSTER',
-    year: '2026',
-    description:
-      '교내 학술지 커버 디자인 제안 프로젝트입니다. 디지털 인문학을 주제로 인간과 기계의 관계를 시각화했으며, 미래융합스쿨의 정체성을 반영한 비주얼 언어를 개발했습니다. 학제간 융합의 가능성을 그래픽 언어로 번역하는 작업입니다.',
-    tools: ['Illustrator', 'Blender', 'Claude'],
-    images: ['ph1', 'ph2'],
-  },
-  {
-    num: 8,
-    title: '장서표 04',
-    category: 'EX LIBRIS',
-    tag: 'EX LIBRIS',
-    year: '2026',
-    description:
-      '장서표 시리즈의 마지막 작품으로, 4년간의 학습과 성장을 상징하는 요소들로 구성했습니다. 한림대학교 미래융합스쿨의 정체성을 담아내며, 디지털과 아날로그, 전통과 혁신의 균형을 시각적으로 표현했습니다. 개인적 서사와 학문적 탐구를 장서표라는 형식 안에 압축했습니다.',
-    tools: ['Illustrator', 'Figma', 'Photoshop'],
-    images: ['ph1', 'ph2', 'ph3'],
-  },
-]
-
+/* TILT view: rotation and vertical offset per card.
+   Values cycle (via modulo) if projects.length exceeds the array length. */
 const TILT_ROT_Z  = [-8,  4, -5,  7, -3,  6, -7,  3]
 const TILT_OFFS_Y = [20, -10, 30, -20, 15, -30, 10, -15]
-const DEG         = Math.PI / 180
+
+const DEG = Math.PI / 180
+
+/* ─── Detect video files by extension ─── */
+const isVideo = src => typeof src === 'string' && /\.mp4$/i.test(src)
 
 /* ─── Pure target calculator — lives outside component so rAF closure is stable ─── */
-function getTarget(i, view, rot, stageW, curRotY) {
+function getTarget(i, view, rot, stageW, curRotY, n) {
   const mob   = stageW < 600
   const faceY = Math.round(curRotY / 360) * 360
 
   if (view === 'RING') {
-    const ang  = (360 / N) * i + rot
+    const ang  = (360 / n) * i + rot
     const rad  = ang * DEG
     const cosA = Math.cos(rad)
     const sinA = Math.sin(rad)
@@ -126,7 +40,7 @@ function getTarget(i, view, rot, stageW, curRotY) {
   }
 
   if (view === 'FLAT') {
-    const ang  = (360 / N) * i + rot
+    const ang  = (360 / n) * i + rot
     const rad  = ang * DEG
     const cosA = Math.cos(rad)
     const sinA = Math.sin(rad)
@@ -142,19 +56,20 @@ function getTarget(i, view, rot, stageW, curRotY) {
 
   if (view === 'TILT') {
     const sp    = (mob ? 110 : CW) + (mob ? 14 : 24)
-    const tot   = N * sp
+    const tot   = n * sp
     const x     = -(tot / 2) + sp / 2 + i * sp
     const normX = Math.abs(x) / ((stageW || 800) / 2)
     return {
-      x, y: TILT_OFFS_Y[i], z: 0,
-      rotY: faceY, rotZ: TILT_ROT_Z[i], rotX: 10,
+      x, y: TILT_OFFS_Y[i % TILT_OFFS_Y.length], z: 0,
+      rotY: faceY, rotZ: TILT_ROT_Z[i % TILT_ROT_Z.length], rotX: 10,
       scale: 1, opacity: Math.max(0.35, 1 - normX * 0.35),
       zIdx: i, depth: 1 - normX,
     }
   }
 
-  /* GALLERY */
-  const arcDeg = (i / (N - 1) - 0.5) * 120
+  /* GALLERY — guard for n ≤ 1 to avoid division by zero */
+  const t      = n > 1 ? i / (n - 1) : 0.5
+  const arcDeg = (t - 0.5) * 120
   const arcRad = arcDeg * DEG
   const arcR   = mob ? 300 : 520
   return {
@@ -163,7 +78,7 @@ function getTarget(i, view, rot, stageW, curRotY) {
     z: 0,
     rotY: faceY, rotZ: arcDeg * 0.25, rotX: 0,
     scale: 1.05, opacity: 1,
-    zIdx: i, depth: i / (N - 1),
+    zIdx: i, depth: t,
   }
 }
 
@@ -176,20 +91,20 @@ function ViewButton({ label, active, onClick }) {
       onMouseEnter={start}
       onMouseLeave={stop}
       style={{
-        padding: '6px 16px',
-        border: active ? '1px solid #AAFF00' : '1px solid #8C8C8C',
-        borderRadius: '9999px',
+        padding:         '6px 16px',
+        border:          active ? '1px solid #AAFF00' : '1px solid #8C8C8C',
+        borderRadius:    '9999px',
         backgroundColor: active ? '#AAFF00' : 'transparent',
-        color: '#1A1A1A',
-        fontWeight: 600,
-        fontSize: '0.7rem',
-        letterSpacing: '0.06em',
-        cursor: 'pointer',
-        transition: 'background-color 200ms ease, border-color 200ms ease',
-        whiteSpace: 'nowrap',
-        fontFamily: 'inherit',
-        lineHeight: 1,
-        userSelect: 'none',
+        color:           '#1A1A1A',
+        fontWeight:      600,
+        fontSize:        '0.7rem',
+        letterSpacing:   '0.06em',
+        cursor:          'pointer',
+        transition:      'background-color 200ms ease, border-color 200ms ease',
+        whiteSpace:      'nowrap',
+        fontFamily:      'inherit',
+        lineHeight:      1,
+        userSelect:      'none',
       }}
     >
       {display}
@@ -198,8 +113,13 @@ function ViewButton({ label, active, onClick }) {
 }
 
 /* ─── WorkCard ─── */
-function WorkCard({ project, setRef, onEnter, onLeave, onClick }) {
+function WorkCard({ project, setRef, setVideoRef, onEnter, onLeave, onClick }) {
   const { display, start, stop } = useScramble(project.title)
+  const [imgError, setImgError]  = useState(false)
+
+  const firstSrc    = project.images?.[0]
+  const firstIsVideo = isVideo(firstSrc)
+
   return (
     <div
       ref={setRef}
@@ -224,6 +144,7 @@ function WorkCard({ project, setRef, onEnter, onLeave, onClick }) {
         userSelect:      'none',
       }}
     >
+      {/* Thumbnail area — real media when available, category text as fallback */}
       <div
         style={{
           flex:            1,
@@ -232,20 +153,62 @@ function WorkCard({ project, setRef, onEnter, onLeave, onClick }) {
           alignItems:      'center',
           justifyContent:  'center',
           pointerEvents:   'none',
+          position:        'relative',
+          overflow:        'hidden',
         }}
       >
-        <span
-          style={{
-            fontWeight:    700,
-            fontSize:      '0.78rem',
-            color:         '#1A1A1A',
-            opacity:       0.28,
-            letterSpacing: '-0.01em',
-          }}
-        >
-          {project.tag}
-        </span>
+        {!imgError && firstSrc ? (
+          firstIsVideo ? (
+            <video
+              ref={el => { if (setVideoRef) setVideoRef(el) }}
+              src={firstSrc}
+              autoPlay
+              loop
+              muted
+              playsInline
+              onError={() => { setImgError(true); if (setVideoRef) setVideoRef(null) }}
+              style={{
+                position:  'absolute',
+                top:       0,
+                left:      0,
+                width:     '100%',
+                height:    '100%',
+                objectFit: 'cover',
+                display:   'block',
+              }}
+            />
+          ) : (
+            <img
+              src={firstSrc}
+              alt={project.title}
+              onError={() => setImgError(true)}
+              style={{
+                position:  'absolute',
+                top:       0,
+                left:      0,
+                width:     '100%',
+                height:    '100%',
+                objectFit: 'cover',
+                display:   'block',
+              }}
+            />
+          )
+        ) : (
+          <span
+            style={{
+              fontWeight:    700,
+              fontSize:      '0.78rem',
+              color:         '#1A1A1A',
+              opacity:       0.28,
+              letterSpacing: '-0.01em',
+            }}
+          >
+            {project.category}
+          </span>
+        )}
       </div>
+
+      {/* Info bar */}
       <div
         style={{
           padding:         '10px 12px',
@@ -277,11 +240,18 @@ function WorkCard({ project, setRef, onEnter, onLeave, onClick }) {
 /* ─── ProjectModal ─── */
 function ProjectModal({ project, isClosing, onClose, onPrev, onNext }) {
   const [selectedThumb, setSelectedThumb] = useState(0)
-  const isMobile = window.innerWidth < 768
-  const currentIdx = PROJECTS.findIndex(p => p.num === project.num)
+  const [mainImgError,  setMainImgError]  = useState(false)
+  const isMobile   = window.innerWidth < 768
+  const currentIdx = projects.findIndex(p => p.id === project.id)
 
-  /* Reset thumbnail when navigating between projects */
-  useEffect(() => { setSelectedThumb(0) }, [project.num])
+  /* Reset thumbnail index and media error state when navigating between projects */
+  useEffect(() => {
+    setSelectedThumb(0)
+    setMainImgError(false)
+  }, [project.id])
+
+  const currentSrc     = project.images?.[selectedThumb]
+  const currentIsVideo = isVideo(currentSrc)
 
   const panelAnim = {
     opacity:    isClosing ? 0 : 1,
@@ -348,7 +318,7 @@ function ProjectModal({ project, isClosing, onClose, onPrev, onNext }) {
           ×
         </button>
 
-        {/* ── LEFT — image area (~60% desktop) ── */}
+        {/* ── LEFT — media area (~60% desktop) ── */}
         <div
           style={{
             flex:            isMobile ? 'none' : '3',
@@ -360,40 +330,81 @@ function ProjectModal({ project, isClosing, onClose, onPrev, onNext }) {
             overflow:        'hidden',
           }}
         >
-          {/* Main image placeholder */}
+          {/* Main media — video or image, category text as fallback */}
           <div
             style={{
-              flex:            1,
-              display:         'flex',
-              alignItems:      'center',
-              justifyContent:  'center',
-              position:        'relative',
-              minHeight:       isMobile ? '200px' : '360px',
+              flex:           1,
+              display:        'flex',
+              alignItems:     'center',
+              justifyContent: 'center',
+              position:       'relative',
+              minHeight:      isMobile ? '200px' : '360px',
+              overflow:       'hidden',
             }}
           >
+            {!mainImgError && currentSrc ? (
+              currentIsVideo ? (
+                <video
+                  key={selectedThumb}
+                  src={currentSrc}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  onError={() => setMainImgError(true)}
+                  style={{
+                    position:  'absolute',
+                    top:       0,
+                    left:      0,
+                    width:     '100%',
+                    height:    '100%',
+                    objectFit: 'cover',
+                    display:   'block',
+                  }}
+                />
+              ) : (
+                <img
+                  key={selectedThumb}
+                  src={currentSrc}
+                  alt={project.title}
+                  onError={() => setMainImgError(true)}
+                  style={{
+                    position:  'absolute',
+                    top:       0,
+                    left:      0,
+                    width:     '100%',
+                    height:    '100%',
+                    objectFit: 'cover',
+                    display:   'block',
+                  }}
+                />
+              )
+            ) : (
+              <span
+                style={{
+                  fontWeight:    700,
+                  fontSize:      isMobile ? '2rem' : '3rem',
+                  color:         '#1A1A1A',
+                  opacity:       0.18,
+                  letterSpacing: '-0.02em',
+                  userSelect:    'none',
+                  pointerEvents: 'none',
+                }}
+              >
+                {project.category}
+              </span>
+            )}
+
+            {/* Media counter badge */}
             <span
               style={{
-                fontWeight:    700,
-                fontSize:      isMobile ? '2rem' : '3rem',
-                color:         '#1A1A1A',
-                opacity:       0.18,
-                letterSpacing: '-0.02em',
-                userSelect:    'none',
-                pointerEvents: 'none',
-              }}
-            >
-              {project.tag}
-            </span>
-            {/* Image counter badge */}
-            <span
-              style={{
-                position:      'absolute',
-                bottom:        '12px',
-                right:         '12px',
-                fontSize:      '0.6rem',
-                fontWeight:    600,
-                color:         'rgba(26,26,26,0.45)',
-                letterSpacing: '0.06em',
+                position:           'absolute',
+                bottom:             '12px',
+                right:              '12px',
+                fontSize:           '0.6rem',
+                fontWeight:         600,
+                color:              'rgba(26,26,26,0.45)',
+                letterSpacing:      '0.06em',
                 fontVariantNumeric: 'tabular-nums',
               }}
             >
@@ -401,7 +412,7 @@ function ProjectModal({ project, isClosing, onClose, onPrev, onNext }) {
             </span>
           </div>
 
-          {/* Thumbnail strip — shown only when project has multiple images */}
+          {/* Thumbnail strip — shown only when project has more than one media item */}
           {project.images.length > 1 && (
             <div
               style={{
@@ -413,34 +424,69 @@ function ProjectModal({ project, isClosing, onClose, onPrev, onNext }) {
                 backgroundColor: '#EBEBEB',
               }}
             >
-              {project.images.map((_, ti) => (
-                <div
-                  key={ti}
-                  onClick={() => setSelectedThumb(ti)}
-                  style={{
-                    width:       '52px',
-                    height:      '68px',
-                    backgroundColor: '#D4D4D4',
-                    border:      ti === selectedThumb
-                      ? '2px solid #AAFF00'
-                      : '1px solid rgba(26,26,26,0.15)',
-                    cursor:      'pointer',
-                    display:     'flex',
-                    alignItems:  'center',
-                    justifyContent: 'center',
-                    fontSize:    '0.6rem',
-                    fontWeight:  600,
-                    color:       '#1A1A1A',
-                    opacity:     ti === selectedThumb ? 1 : 0.45,
-                    transition:  'border-color 150ms ease, opacity 150ms ease',
-                    flexShrink:  0,
-                    letterSpacing: '0.04em',
-                    userSelect:  'none',
-                  }}
-                >
-                  {String(ti + 1).padStart(2, '0')}
-                </div>
-              ))}
+              {project.images.map((imgSrc, ti) => {
+                const thumbIsVideo = isVideo(imgSrc)
+                return (
+                  <div
+                    key={ti}
+                    onClick={() => { setSelectedThumb(ti); setMainImgError(false) }}
+                    style={{
+                      width:           '52px',
+                      height:          '68px',
+                      backgroundColor: '#D4D4D4',
+                      border:          ti === selectedThumb
+                        ? '2px solid #AAFF00'
+                        : '1px solid rgba(26,26,26,0.15)',
+                      cursor:          'pointer',
+                      overflow:        'hidden',
+                      flexShrink:      0,
+                      opacity:         ti === selectedThumb ? 1 : 0.45,
+                      transition:      'border-color 150ms ease, opacity 150ms ease',
+                      position:        'relative',
+                      display:         'flex',
+                      alignItems:      'center',
+                      justifyContent:  'center',
+                    }}
+                  >
+                    {thumbIsVideo ? (
+                      /* Video thumbnail: dark background with centered ▶ and
+                         a small corner indicator */
+                      <>
+                        <div
+                          style={{
+                            position:        'absolute',
+                            inset:           0,
+                            backgroundColor: '#1C1C1C',
+                          }}
+                        />
+                        <span
+                          style={{
+                            position:  'relative',
+                            zIndex:    1,
+                            fontSize:  '1.1rem',
+                            color:     '#AAFF00',
+                            lineHeight: 1,
+                          }}
+                        >
+                          ▶
+                        </span>
+                      </>
+                    ) : (
+                      <img
+                        src={imgSrc}
+                        alt={`${project.title} ${ti + 1}`}
+                        style={{
+                          width:     '100%',
+                          height:    '100%',
+                          objectFit: 'cover',
+                          display:   'block',
+                        }}
+                        onError={e => { e.currentTarget.style.display = 'none' }}
+                      />
+                    )}
+                  </div>
+                )
+              })}
             </div>
           )}
         </div>
@@ -469,6 +515,27 @@ function ProjectModal({ project, isClosing, onClose, onPrev, onNext }) {
           >
             {project.category}
           </p>
+
+          {/* Award badge — shown only when project.award is set */}
+          {project.award && (
+            <div
+              style={{
+                display:         'inline-block',
+                alignSelf:       'flex-start',
+                backgroundColor: '#AAFF00',
+                color:           '#1A1A1A',
+                fontWeight:      600,
+                fontSize:        '0.62rem',
+                padding:         '4px 10px',
+                borderRadius:    '4px',
+                letterSpacing:   '0.02em',
+                lineHeight:      1.5,
+                marginTop:       '-8px',
+              }}
+            >
+              ✦ {project.award}
+            </div>
+          )}
 
           {/* Title — GlitchText triggers on mount and on hover */}
           <GlitchText
@@ -503,16 +570,45 @@ function ProjectModal({ project, isClosing, onClose, onPrev, onNext }) {
           {/* Description */}
           <p
             style={{
-              fontWeight:  400,
-              fontSize:    '0.875rem',
-              color:       '#1A1A1A',
-              lineHeight:  1.85,
-              flex:        1,
-              minHeight:   0,
+              fontWeight: 400,
+              fontSize:   '0.875rem',
+              color:      '#1A1A1A',
+              lineHeight: 1.85,
+              flex:       1,
+              minHeight:  0,
             }}
           >
             {project.description}
           </p>
+
+          {/* Process — shown only when project.process exists */}
+          {project.process && (
+            <div style={{ marginTop: '16px' }}>
+              <p
+                style={{
+                  fontWeight:    600,
+                  fontSize:      '0.62rem',
+                  color:         '#8C8C8C',
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  marginBottom:  '8px',
+                }}
+              >
+                PROCESS
+              </p>
+              <p
+                style={{
+                  fontWeight: 400,
+                  fontSize:   '0.875rem',
+                  color:      '#1A1A1A',
+                  lineHeight: 1.85,
+                  opacity:    0.9,
+                }}
+              >
+                {project.process}
+              </p>
+            </div>
+          )}
 
           {/* Tools */}
           <div>
@@ -589,7 +685,7 @@ function ProjectModal({ project, isClosing, onClose, onPrev, onNext }) {
                 letterSpacing:      '0.04em',
               }}
             >
-              {String(currentIdx + 1).padStart(2, '0')} / {String(N).padStart(2, '0')}
+              {String(currentIdx + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}
             </span>
             <button
               onClick={onNext}
@@ -629,18 +725,19 @@ export default function Work() {
 
   /* ── Stable refs for rAF loop ── */
   const stageRef       = useRef(null)
-  const cardEls        = useRef(new Array(N).fill(null))
+  const cardEls        = useRef(new Array(projects.length).fill(null))
+  const videoEls       = useRef(new Array(projects.length).fill(null))
   const rafRef         = useRef(null)
   const rotRef         = useRef(0)
   const activeViewRef  = useRef('RING')
   const mouseRef       = useRef({ x: 0, y: 0, inside: false })
   const hovRef         = useRef(-1)
   const frontRef       = useRef(1)
-  const isPausedRef    = useRef(false)   /* pauses rotation + push while modal is open */
-  const selProjRef     = useRef(null)    /* mirror of selectedProject for keyboard handler */
-  const pushOff        = useRef(Array.from({ length: N }, () => ({ x: 0, y: 0 })))
+  const isPausedRef    = useRef(false)
+  const selProjRef     = useRef(null)
+  const pushOff        = useRef(Array.from({ length: projects.length }, () => ({ x: 0, y: 0 })))
   const curPos         = useRef(
-    Array.from({ length: N }, () => ({
+    Array.from({ length: projects.length }, () => ({
       x: 0, y: 0, z: 0, rotY: 0, rotZ: 0, rotX: 0, scale: 0.9, opacity: 0,
     }))
   )
@@ -648,7 +745,7 @@ export default function Work() {
   useEffect(() => { activeViewRef.current = activeView }, [activeView])
   useEffect(() => { selProjRef.current    = selectedProject }, [selectedProject])
 
-  /* ── Modal open / close / navigate — all stable via refs or useCallback ── */
+  /* ── Modal open / close / navigate ── */
   const openModal = (project) => {
     isPausedRef.current  = true
     hovRef.current       = -1
@@ -668,15 +765,15 @@ export default function Work() {
   const goNext = useCallback(() => {
     const proj = selProjRef.current
     if (!proj) return
-    const idx = PROJECTS.findIndex(p => p.num === proj.num)
-    setSelectedProject(PROJECTS[(idx + 1) % N])
+    const idx = projects.findIndex(p => p.id === proj.id)
+    setSelectedProject(projects[(idx + 1) % projects.length])
   }, [])
 
   const goPrev = useCallback(() => {
     const proj = selProjRef.current
     if (!proj) return
-    const idx = PROJECTS.findIndex(p => p.num === proj.num)
-    setSelectedProject(PROJECTS[(idx - 1 + N) % N])
+    const idx = projects.findIndex(p => p.id === proj.id)
+    setSelectedProject(projects[(idx - 1 + projects.length) % projects.length])
   }, [])
 
   /* ── Keyboard: Escape closes, arrows navigate ── */
@@ -689,18 +786,18 @@ export default function Work() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [closeModal, goNext, goPrev])   /* all stable → runs once */
+  }, [closeModal, goNext, goPrev])
 
-  /* ── Single rAF loop — gallery untouched except isPausedRef guard ── */
+  /* ── Single rAF loop ── */
   useEffect(() => {
     const PUSH_R  = 220
     const PUSH_S  = 70
     const PL      = 0.12
     const LP      = 0.10
     const ROT_SPD = 0.15
+    const n       = projects.length
 
     const tick = () => {
-      /* Rotation pauses while modal is open */
       if (!isPausedRef.current) {
         rotRef.current += ROT_SPD
       }
@@ -714,19 +811,18 @@ export default function Work() {
       const rot   = rotRef.current
       const mouse = mouseRef.current
 
-      /* Push disabled while modal is open */
       const mX = (!isPausedRef.current && mouse.inside) ? mouse.x - sw / 2 : -99999
       const mY = (!isPausedRef.current && mouse.inside) ? mouse.y - sh / 2 : -99999
 
       let frontIdx = 0
       let maxDep   = -Infinity
 
-      for (let i = 0; i < N; i++) {
+      for (let i = 0; i < n; i++) {
         const el = cardEls.current[i]
         if (!el) continue
 
         const c  = curPos.current[i]
-        const t  = getTarget(i, view, rot, sw, c.rotY)
+        const t  = getTarget(i, view, rot, sw, c.rotY, n)
         const po = pushOff.current[i]
 
         const approxX = t.x + po.x
@@ -746,13 +842,13 @@ export default function Work() {
         const fx = t.x + po.x
         const fy = t.y + po.y
 
-        c.x       += (fx          - c.x)       * LP
-        c.y       += (fy          - c.y)       * LP
-        c.z       += (t.z         - c.z)       * LP
-        c.scale   += (t.scale     - c.scale)   * LP
-        c.opacity += (t.opacity   - c.opacity) * LP
-        c.rotZ    += (t.rotZ      - c.rotZ)    * LP
-        c.rotX    += (t.rotX      - c.rotX)    * LP
+        c.x       += (fx        - c.x)       * LP
+        c.y       += (fy        - c.y)       * LP
+        c.z       += (t.z       - c.z)       * LP
+        c.scale   += (t.scale   - c.scale)   * LP
+        c.opacity += (t.opacity - c.opacity) * LP
+        c.rotZ    += (t.rotZ    - c.rotZ)    * LP
+        c.rotX    += (t.rotX    - c.rotX)    * LP
 
         let rd = t.rotY - c.rotY
         while (rd >  180) rd -= 360
@@ -760,9 +856,9 @@ export default function Work() {
         c.rotY += rd * LP
 
         const hov  = hovRef.current === i
-        const finZ = hov ? c.z + 60                 : c.z
-        const finS = hov ? Math.max(c.scale, 1.08)  : c.scale
-        const finO = hov ? 1                         : c.opacity
+        const finZ = hov ? c.z + 60                : c.z
+        const finS = hov ? Math.max(c.scale, 1.08) : c.scale
+        const finO = hov ? 1                        : c.opacity
 
         el.style.transform = (
           `translateX(${c.x.toFixed(1)}px) ` +
@@ -788,6 +884,19 @@ export default function Work() {
         setCurrentCard(next)
       }
 
+      /* Video play/pause: only the front card and hovered card play.
+         All gallery videos pause when the modal is open (isPausedRef). */
+      for (let i = 0; i < n; i++) {
+        const vEl = videoEls.current[i]
+        if (!vEl) continue
+        const focused = !isPausedRef.current && (i === frontIdx || hovRef.current === i)
+        if (focused) {
+          if (vEl.paused) vEl.play().catch(() => {})
+        } else {
+          if (!vEl.paused) vEl.pause()
+        }
+      }
+
       rafRef.current = requestAnimationFrame(tick)
     }
 
@@ -795,7 +904,7 @@ export default function Work() {
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) }
   }, [])
 
-  /* ── Stage event handlers — unchanged ── */
+  /* ── Stage event handlers ── */
   const handleMouseMove = (e) => {
     const rect = stageRef.current?.getBoundingClientRect()
     if (!rect) return
@@ -877,10 +986,10 @@ export default function Work() {
           </p>
           <div
             style={{
-              display:       'flex',
-              gap:           '8px',
-              flexWrap:      'nowrap',
-              overflowX:     'auto',
+              display:        'flex',
+              gap:            '8px',
+              flexWrap:       'nowrap',
+              overflowX:      'auto',
               scrollbarWidth: 'none',
             }}
           >
@@ -895,19 +1004,20 @@ export default function Work() {
           </div>
         </div>
 
-        {/* Cards — onClick triggers modal open */}
-        {PROJECTS.map((project, i) => (
+        {/* Cards — rendered dynamically from projects array */}
+        {projects.map((project, i) => (
           <WorkCard
-            key={project.num}
+            key={project.id}
             project={project}
             setRef={el => { cardEls.current[i] = el }}
+            setVideoRef={el => { videoEls.current[i] = el }}
             onEnter={() => { hovRef.current = i }}
             onLeave={() => { hovRef.current = -1 }}
             onClick={() => openModal(project)}
           />
         ))}
 
-        {/* Bottom bar */}
+        {/* Bottom bar — counter adapts to projects.length */}
         <div
           style={{
             position:       'absolute',
@@ -941,12 +1051,12 @@ export default function Work() {
               fontVariantNumeric: 'tabular-nums',
             }}
           >
-            {String(currentCard).padStart(2, '0')} — {String(N).padStart(2, '0')}
+            {String(currentCard).padStart(2, '0')} — {String(projects.length).padStart(2, '0')}
           </p>
         </div>
       </div>
 
-      {/* ── Project detail modal — rendered as fixed overlay outside stage ── */}
+      {/* ── Project detail modal ── */}
       {selectedProject && (
         <ProjectModal
           project={selectedProject}

@@ -14,89 +14,72 @@ const TERMINAL_LINES = [
   { text: '> ACCESS GRANTED ✦', pause: 1000, isLast: true },
 ]
 
-/* Keywords surrounding the profile photo.
-   Photo bounding box on desktop (1440×900, 360×480):
-     horizontal 37.5 % – 62.5 %, vertical 23.3 % – 76.7 %.
-   All positions below are verified to be outside that box.
+/*
+  Zone map (desktop, ~1440×900):
 
-   finalOpacity: optional cap for elements that must appear faint
-                 even after the burst (only "2026" uses this). */
+  CENTER: photo (360×480) + "> SUBJECT IDENTIFIED" + taglines
+          Centered at 50%/50%.  Horizontal ~37.5%–62.5%, vertical ~23%–77%
+          No keyword may enter this bounding box.
+
+  A  top-left      26학번            left:4%   top:8%
+  B  top-center    박채빈            left:40%  top:4%
+  C  top-right     AI                left:80%  top:8%
+  D  mid-left      design            left:4%   top:44%   (< 37.5% horiz, clear of photo)
+  E  mid-right     Claude            left:72%  top:44%   (> 62.5% horiz)
+  F  bottom-left   한림대학교 재학중   left:4%   top:58%   (above terminal ~64.7%, left of photo)
+  H  bottom-right  디지털인문예술     left:68%  top:78%   (right of center labels)
+  G  far-right     2026              left:85%  top:92%   (past H's right edge, below labels)
+
+  "미래융합스쿨" removed — redundant with 한림대학교 재학중.
+  finalOpacity: optional opacity cap applied in both burst and flashlight phases.
+  hideOnMobile: element is hidden on screens narrower than 768px.
+*/
 const KEYWORDS = [
-  /* Primary name — above photo, top-center */
-  {
-    text: '박채빈', weight: 800,
-    size: '4.5rem', mobileSize: '2.5rem',
-    color: '#AAFF00', left: '45%', top: '4%',
-    delay: 200,
-  },
-  /* Top-right — clear of photo */
-  {
-    text: 'AI', weight: 800,
-    size: '3.75rem', mobileSize: '2rem',
-    color: '#AAFF00', left: '78%', top: '12%',
-    delay: 600,
-  },
-  /* Top-left */
-  {
-    text: '26학번', weight: 800,
-    size: '2.25rem', mobileSize: '1.375rem',
-    color: '#AAFF00', left: '10%', top: '14%',
-    delay: 1000,
-  },
-  /* Left-center — well outside 37.5 % left edge of photo */
-  {
-    text: 'DESIGN', weight: 800,
-    size: '3rem', mobileSize: '1.75rem',
-    color: '#F7F7F7', left: '5%', top: '42%',
-    delay: 1400,
-  },
-  /* Right-center — well outside 62.5 % right edge */
-  {
-    text: 'Claude', weight: 800,
-    size: '3rem', mobileSize: '1.625rem',
-    color: '#F7F7F7', left: '76%', top: '40%',
-    delay: 1800,
-  },
-  /* Bottom-right — below photo bottom (76.7 %) and past 62.5 % right edge */
-  {
-    text: '디지털인문예술', weight: 700,
-    size: '1.875rem', mobileSize: '0.875rem',
-    color: '#F7F7F7', left: '68%', top: '74%',
-    delay: 2200,
-  },
-  /* Bottom-left */
-  {
-    text: '한림대학교 재학중', weight: 700,
-    size: '1.5rem', mobileSize: '0.7rem',
-    color: '#F7F7F7', left: '8%', top: '76%',
-    delay: 2600,
-  },
-  /* Bottom-center — below photo and below tagline (~86 % on desktop) */
-  {
-    text: '미래융합스쿨', weight: 700,
-    size: '1.875rem', mobileSize: '1rem',
-    color: '#F7F7F7', left: '40%', top: '88%',
-    delay: 3000,
-  },
-  /* Decorative year — bottom-right corner, clear of everything.
-     finalOpacity: 0.3 keeps it faint even after the burst. */
-  {
-    text: '2026', weight: 400,
-    size: '1.5rem', mobileSize: '1rem',
-    color: '#F7F7F7', left: '88%', top: '90%',
-    delay: 3400, finalOpacity: 0.3,
-  },
+  { text: '박채빈',           weight: 800, size: '3.75rem', mobileSize: '1.875rem',
+    color: '#AAFF00', left: '40%', top: '4%', mobileLeft: '32%', mobileTop: '3%',
+    delay: 200 },
+  { text: 'AI',              weight: 800, size: '3.75rem', mobileSize: '2rem',
+    color: '#AAFF00', left: '80%', top: '8%', mobileLeft: '72%', mobileTop: '12%',
+    delay: 600 },
+  { text: '26학번',           weight: 800, size: '2.25rem', mobileSize: '1.375rem',
+    color: '#AAFF00', left: '4%',  top: '8%', mobileLeft: '3%',  mobileTop: '12%',
+    delay: 1000 },
+  { text: 'design',          weight: 800, size: '3rem',    mobileSize: '1.75rem',
+    color: '#F7F7F7', left: '4%',  top: '44%', mobileLeft: '3%', mobileTop: '83%',
+    delay: 1400 },
+  { text: 'Claude',          weight: 800, size: '3rem',    mobileSize: '1.625rem',
+    color: '#F7F7F7', left: '72%', top: '44%', mobileLeft: '55%', mobileTop: '83%',
+    delay: 1800 },
+  { text: '디지털인문예술',    weight: 700, size: '1.5rem',  mobileSize: '0.875rem',
+    color: '#F7F7F7', left: '68%', top: '78%', mobileLeft: '52%', mobileTop: '90%',
+    delay: 2200 },
+  { text: '한림대학교 재학중', weight: 700, size: '1.25rem', mobileSize: '0.7rem',
+    color: '#F7F7F7', left: '4%',  top: '58%', mobileLeft: '3%', mobileTop: '90%',
+    delay: 2600 },
+  { text: '2026',            weight: 400, size: '1.25rem', mobileSize: '1rem',
+    color: '#F7F7F7', left: '85%', top: '92%', mobileLeft: '85%', mobileTop: '92%',
+    delay: 3000, finalOpacity: 0.3, hideOnMobile: true },
 ]
 
-function TypewriterText({ text, delay = 0, style }) {
+/* Typewriter that respects an `active` gate.
+   When active becomes false: timers clear, displayed resets to ''.
+   When active becomes true:  delay fires, then character-by-character typing starts.
+   Default active=true keeps existing callers that don't pass the prop working. */
+function TypewriterText({ text, delay = 0, style, active = true }) {
   const [displayed, setDisplayed] = useState('')
   const [started, setStarted]     = useState(false)
   const [done, setDone]           = useState(false)
 
   useEffect(() => {
+    if (!active) {
+      setStarted(false)
+      setDisplayed('')
+      setDone(false)
+      return
+    }
     const t = setTimeout(() => setStarted(true), delay)
     return () => clearTimeout(t)
-  }, [delay])
+  }, [active, delay])
 
   useEffect(() => {
     if (!started) return
@@ -117,7 +100,7 @@ function TypewriterText({ text, delay = 0, style }) {
   return (
     <span style={style}>
       {displayed}
-      {!done && <span className="blink">|</span>}
+      {!done && active && <span className="blink">|</span>}
     </span>
   )
 }
@@ -126,20 +109,25 @@ export default function AboutMe() {
   const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0
 
   const sw          = window.innerWidth
-  const photoWidth  = sw < 768 ? '240px' : sw < 1024 ? '300px' : '360px'
-  const photoHeight = sw < 768 ? '320px' : sw < 1024 ? '400px' : '480px'
+  const photoWidth  = sw < 768 ? '240px' : '360px'
+  const photoHeight = sw < 768 ? '320px' : '480px'
 
-  const [revealed, setRevealed]             = useState(false)
-  const [terminalLines, setTerminalLines]   = useState([])
-  const [currentTyping, setCurrentTyping]   = useState('')
+  const [revealed, setRevealed]                 = useState(false)
+  const [terminalLines, setTerminalLines]       = useState([])
+  const [currentTyping, setCurrentTyping]       = useState('')
   const [photoRevealStage, setPhotoRevealStage] = useState(0)
 
-  const flashlightRef    = useRef(null)
-  const keywordRefs      = useRef([])
-  const photoRef         = useRef(null)
-  const mousePosRef      = useRef({ x: -9999, y: -9999 })
-  const rafScheduledRef  = useRef(false)
-  const revealedRef      = useRef(false)
+  /* Section-level visibility: drives terminal start/reset and flashlight gate */
+  const [sectionInView, setSectionInView]       = useState(false)
+  const sectionInViewRef                        = useRef(false)
+
+  const sectionRef      = useRef(null)
+  const flashlightRef   = useRef(null)
+  const keywordRefs     = useRef([])
+  const photoRef        = useRef(null)
+  const mousePosRef     = useRef({ x: -9999, y: -9999 })
+  const rafScheduledRef = useRef(false)
+  const revealedRef     = useRef(false)
 
   /* Set initial keyword/photo styles synchronously before first paint.
      Opacity and transform are managed DOM-direct to avoid React overwriting
@@ -159,8 +147,55 @@ export default function AboutMe() {
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  /* Terminal — sequential character-by-character with pauses */
+  /* Watch the section element — fires on every entry/exit so animations replay */
   useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        sectionInViewRef.current = entry.isIntersecting
+        setSectionInView(entry.isIntersecting)
+      },
+      { threshold: 0.1 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  /* Terminal sequence + full reset on scroll-out.
+     When sectionInView goes false: clear all timers, reset every piece of state
+     and every DOM style back to the initial hidden state.
+     When sectionInView goes true: start the terminal sequence from scratch. */
+  useEffect(() => {
+    if (!sectionInView) {
+      /* Reset React state */
+      setRevealed(false)
+      revealedRef.current = false
+      setTerminalLines([])
+      setCurrentTyping('')
+      setPhotoRevealStage(0)
+
+      /* Reset keyword DOM styles to initial hidden state */
+      keywordRefs.current.forEach(el => {
+        if (!el) return
+        el.style.transition = 'none'
+        el.style.opacity    = isMobile ? '0.15' : '0'
+        el.style.transform  = 'translate(0, 0) scale(1)'
+      })
+
+      /* Reset photo DOM styles */
+      if (photoRef.current) {
+        photoRef.current.style.transition  = 'none'
+        photoRef.current.style.opacity     = isMobile ? '0.15' : '0'
+        photoRef.current.style.border      = '1px solid #AAFF00'
+        photoRef.current.style.transform   = 'scale(1)'
+        photoRef.current.style.boxShadow   = 'none'
+      }
+
+      return
+    }
+
+    /* Section entered viewport — start terminal typing from the beginning */
     const timeouts       = []
     let totalDelay       = 0
     const completedLines = []
@@ -198,7 +233,7 @@ export default function AboutMe() {
     })
 
     return () => timeouts.forEach(clearTimeout)
-  }, [])
+  }, [sectionInView]) // eslint-disable-line react-hooks/exhaustive-deps
 
   /* Phase 2 — radial burst: photo scales in, keywords fly to resting positions */
   useEffect(() => {
@@ -214,7 +249,7 @@ export default function AboutMe() {
       photoRef.current.style.boxShadow   = 'none'
     }
 
-    /* Snap keywords toward section center so they can burst outward */
+    /* Snap keywords toward section center so they burst outward */
     keywordRefs.current.forEach(el => {
       if (!el) return
       const rect = el.getBoundingClientRect()
@@ -228,7 +263,7 @@ export default function AboutMe() {
     })
 
     const rafId = requestAnimationFrame(() => {
-      /* Photo bursts in */
+      /* Photo animates in: scale 0.8→1, opacity 0→1, border + glow */
       if (photoRef.current) {
         photoRef.current.style.transition =
           'opacity 400ms ease-out, transform 400ms ease-out, border-width 300ms ease, box-shadow 300ms ease'
@@ -238,13 +273,13 @@ export default function AboutMe() {
         photoRef.current.style.boxShadow   = '0 0 20px rgba(170,255,0,0.3)'
       }
 
-      /* Keywords fly to resting positions with staggered delay.
-         Each keyword's final opacity is capped by finalOpacity (default 1). */
+      /* Keywords fly to resting positions.
+         finalOpacity caps the target opacity (only "2026" uses 0.3). */
       keywordRefs.current.forEach((el, i) => {
         if (!el) return
-        const kw      = KEYWORDS[i]
-        const finOpa  = String(kw?.finalOpacity ?? 1)
-        const d       = `${i * 80}ms`
+        const kw     = KEYWORDS[i]
+        const finOpa = String(kw?.finalOpacity ?? 1)
+        const d      = `${i * 80}ms`
         el.style.transition =
           `transform 700ms cubic-bezier(0.16, 1, 0.3, 1) ${d}, ` +
           `opacity   700ms cubic-bezier(0.16, 1, 0.3, 1) ${d}`
@@ -253,13 +288,13 @@ export default function AboutMe() {
       })
     })
 
-    /* Scanline pass */
+    /* Stage 2 — scanline pass over photo (~600ms after burst starts) */
     timeouts.push(setTimeout(() => setPhotoRevealStage(2), 1000))
-    /* Photo content fades in */
+    /* Stage 3 — scanline clears (~400ms of animation) */
     timeouts.push(setTimeout(() => setPhotoRevealStage(3), 1400))
-    /* "> SUBJECT IDENTIFIED" types out */
+    /* Stage 4 — "> SUBJECT IDENTIFIED" types out (~900ms) */
     timeouts.push(setTimeout(() => setPhotoRevealStage(4), 1600))
-    /* Tagline fades in */
+    /* Stage 5 — taglines fade in */
     timeouts.push(setTimeout(() => setPhotoRevealStage(5), 1800))
 
     return () => {
@@ -269,12 +304,14 @@ export default function AboutMe() {
   }, [revealed])
 
   /* Flashlight gradient + distance-based opacity — desktop only, Phase 1.
+     Gated on sectionInViewRef so it does nothing while the section is off-screen.
      finalOpacity caps the maximum brightness a keyword can reach under the beam. */
   useEffect(() => {
     if (isMobile) return
 
     const updateVisuals = () => {
       rafScheduledRef.current = false
+      if (!sectionInViewRef.current) return
       const { x, y } = mousePosRef.current
 
       if (flashlightRef.current) {
@@ -327,13 +364,14 @@ export default function AboutMe() {
   return (
     <div
       id="about-me"
+      ref={sectionRef}
       style={{
-        scrollSnapAlign:  'start',
-        scrollSnapStop:   'normal',
-        minHeight:        '100vh',
-        position:         'relative',
-        overflow:         'hidden',
-        backgroundColor:  '#1C1C1C',
+        scrollSnapAlign: 'start',
+        scrollSnapStop:  'normal',
+        minHeight:       '100vh',
+        position:        'relative',
+        overflow:        'hidden',
+        backgroundColor: '#1C1C1C',
       }}
     >
       {/* Local noise grain */}
@@ -341,7 +379,8 @@ export default function AboutMe() {
         style={{
           position:      'absolute',
           top: 0, left: 0,
-          width: '100%', height: '100%',
+          width:         '100%',
+          height:        '100%',
           zIndex:        25,
           pointerEvents: 'none',
           opacity:       0.1,
@@ -361,7 +400,8 @@ export default function AboutMe() {
           style={{
             position:      'absolute',
             top: 0, left: 0,
-            width: '100%', height: '100%',
+            width:         '100%',
+            height:        '100%',
             zIndex:        20,
             pointerEvents: 'none',
             background:    'transparent',
@@ -369,17 +409,18 @@ export default function AboutMe() {
         />
       )}
 
-      {/* Scattered keyword elements.
-          Font sizes respond to screen width via sw check.
-          Opacity and transform are driven DOM-direct by the effects above. */}
+      {/* Scattered keywords — one per zone.
+          hideOnMobile items are hidden on screens narrower than 768px.
+          active={sectionInView} so TypewriterText resets and replays on re-entry. */}
       {KEYWORDS.map((kw, i) => (
         <div
           key={kw.text}
           ref={el => { keywordRefs.current[i] = el }}
           style={{
             position:      'absolute',
-            left:          kw.left,
-            top:           kw.top,
+            display:       kw.hideOnMobile && sw < 768 ? 'none' : undefined,
+            left:          sw < 768 ? kw.mobileLeft : kw.left,
+            top:           sw < 768 ? kw.mobileTop  : kw.top,
             fontSize:      sw < 768 ? kw.mobileSize : kw.size,
             fontWeight:    kw.weight,
             color:         kw.color,
@@ -392,36 +433,39 @@ export default function AboutMe() {
             whiteSpace:    'nowrap',
           }}
         >
-          <TypewriterText text={kw.text} delay={kw.delay} />
+          <TypewriterText text={kw.text} delay={kw.delay} active={sectionInView} />
         </div>
       ))}
 
-      {/* Profile photo — centering wrapper (React) + inner div (DOM-direct) */}
+      {/* CENTER zone: photo (360×480 / 240×320) + labels stacked below with gap-3 */}
       <div
         style={{
-          position:  'absolute',
-          left:      '50%',
-          top:       '50%',
-          transform: 'translate(-50%, -50%)',
-          width:     photoWidth,
-          height:    photoHeight,
-          zIndex:    15,
+          position:      'absolute',
+          left:          '50%',
+          top:           '50%',
+          transform:     'translate(-50%, -50%)',
+          width:         photoWidth,
+          height:        photoHeight,
+          zIndex:        15,
           pointerEvents: 'none',
         }}
       >
+        {/* Profile photo placeholder — backgroundColor makes it visible as a bordered card */}
         <div
           ref={photoRef}
           style={{
-            width:          '100%',
-            height:         '100%',
-            overflow:       'hidden',
-            display:        'flex',
-            flexDirection:  'column',
-            alignItems:     'center',
-            justifyContent: 'center',
+            width:           '100%',
+            height:          '100%',
+            overflow:        'hidden',
+            position:        'relative',
+            backgroundColor: '#1C1C1C',
+            display:         'flex',
+            flexDirection:   'column',
+            alignItems:      'center',
+            justifyContent:  'center',
           }}
         >
-          {/* Scanline pass — stage 2 only */}
+          {/* Scanline pass — animates across the photo face at stage 2 */}
           {photoRevealStage === 2 && (
             <div
               className="scanline-pass"
@@ -430,40 +474,30 @@ export default function AboutMe() {
                 top: 0, left: 0,
                 width:         '100%',
                 height:        '100%',
-                background:    'linear-gradient(to bottom, transparent 0%, rgba(170,255,0,0.18) 50%, transparent 100%)',
+                background:    'linear-gradient(to bottom, transparent 0%, rgba(170,255,0,0.15) 50%, transparent 100%)',
                 zIndex:        2,
                 pointerEvents: 'none',
               }}
             />
           )}
 
-          <span
+          {/* Profile photo */}
+          <img
+            src="/profile.jpg"
+            alt="박채빈"
             style={{
-              fontWeight:    800,
-              fontSize:      '2rem',
-              color:         '#F7F7F7',
-              letterSpacing: '-0.04em',
-              position:      'relative',
-              zIndex:        1,
+              width:          '100%',
+              height:         '100%',
+              objectFit:      'cover',
+              objectPosition: 'top center',
+              display:        'block',
+              position:       'relative',
+              zIndex:         1,
             }}
-          >
-            CB
-          </span>
-          <p
-            style={{
-              fontSize:  '0.65rem',
-              fontWeight: 400,
-              color:     'rgba(255,255,255,0.25)',
-              marginTop: '8px',
-              position:  'relative',
-              zIndex:    1,
-            }}
-          >
-            프로필 사진
-          </p>
+          />
         </div>
 
-        {/* Labels and tagline — below photo, inside wrapper */}
+        {/* Labels — gap-3 (12px) between each: SUBJECT IDENTIFIED, tagline 1, tagline 2 */}
         {photoRevealStage >= 4 && (
           <div
             style={{
@@ -474,12 +508,17 @@ export default function AboutMe() {
               marginTop:     '12px',
               pointerEvents: 'none',
               textAlign:     'center',
+              display:       'flex',
+              flexDirection: 'column',
+              alignItems:    'center',
+              gap:           '12px',
             }}
           >
             <div style={{ whiteSpace: 'nowrap' }}>
               <TypewriterText
                 text="> SUBJECT IDENTIFIED"
                 delay={0}
+                active={sectionInView}
                 style={{
                   color:         '#AAFF00',
                   fontSize:      '0.7rem',
@@ -491,19 +530,22 @@ export default function AboutMe() {
 
             <div
               style={{
-                marginTop:  '12px',
-                opacity:    photoRevealStage >= 5 ? 1 : 0,
-                transition: 'opacity 400ms ease',
+                opacity:       photoRevealStage >= 5 ? 1 : 0,
+                transition:    'opacity 400ms ease',
+                display:       'flex',
+                flexDirection: 'column',
+                alignItems:    'center',
+                gap:           '12px',
               }}
             >
               <p
                 style={{
-                  color:     '#F7F7F7',
-                  opacity:   0.6,
-                  fontSize:  sw < 768 ? '0.7rem' : '0.8rem',
+                  color:      '#F7F7F7',
+                  opacity:    0.6,
+                  fontSize:   sw < 768 ? '0.7rem' : '0.8rem',
                   fontWeight: 400,
                   whiteSpace: sw < 768 ? 'normal' : 'nowrap',
-                  maxWidth:  sw < 768 ? '260px' : 'none',
+                  maxWidth:   sw < 768 ? '260px' : 'none',
                 }}
               >
                 디지털과 인문, 인간과 AI의 교차점에서
@@ -513,7 +555,6 @@ export default function AboutMe() {
                   color:      '#AAFF00',
                   fontSize:   sw < 768 ? '0.875rem' : '1rem',
                   fontWeight: 600,
-                  marginTop:  '4px',
                   whiteSpace: sw < 768 ? 'normal' : 'nowrap',
                 }}
               >
@@ -567,7 +608,7 @@ export default function AboutMe() {
         )}
       </div>
 
-      {/* SCROLL TO EXPLORE label — Phase 2 only */}
+      {/* SCROLL TO EXPLORE — Phase 2 only */}
       {revealed && (
         <div
           className="pulse-label"

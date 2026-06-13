@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "PowerShell(Get-ChildItem \"C:\\\\Users\\\\chap1\\\\Downloads\\\\ddddd\" -Recurse -Exclude \"node_modules\",\"dist\",\".git\" | Where-Object { $_.FullName -notmatch \"node_modules|dist|\\\\.git\" } | Select-Object FullName | Sort-Object FullName)",
-      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\chap1\\\\Downloads\\\\ddddd\" -Recurse | Where-Object { $_.FullName -notmatch \"node_modules|dist|\\\\.git|\\\\.claude\" } | Select-Object FullName | Sort-Object FullName)"
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\chap1\\\\Downloads\\\\ddddd\" -Recurse | Where-Object { $_.FullName -notmatch \"node_modules|dist|\\\\.git|\\\\.claude\" } | Select-Object FullName | Sort-Object FullName)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\chap1\\\\Downloads\\\\ddddd\" -Recurse | Where-Object { $_.Name -match '\\\\.\\(jpg|jpeg|png|webp\\)$' } | Format-Table FullName)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\chap1\" -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '\\\\.\\(jpg|jpeg|png|webp\\)$' -and $_.LastWriteTime -gt \\(Get-Date\\).AddHours\\(-2\\) } | Sort-Object LastWriteTime -Descending | Format-Table FullName, Length, LastWriteTime)",
+      "PowerShell(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\chap1\\\\Downloads\\\\ddddd\\\\client\\\\src\\\\data\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\chap1\\\\Downloads\\\\ddddd\\\\client\\\\public\\\\images\\\\work\")"
     ]
   }
 }

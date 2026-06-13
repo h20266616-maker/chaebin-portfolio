@@ -2,17 +2,14 @@ import { useEffect, useRef, useState } from 'react'
 
 export default function StaggerText({ children, className = '', style = {}, tag: Tag = 'span' }) {
   const wrapperRef = useRef(null)
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible]   = useState(false)
 
   useEffect(() => {
     const el = wrapperRef.current
     if (!el) return
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true)
-          observer.disconnect()
-        }
+        setVisible(entry.isIntersecting)
       },
       { threshold: 0.15 }
     )
@@ -20,7 +17,7 @@ export default function StaggerText({ children, className = '', style = {}, tag:
     return () => observer.disconnect()
   }, [])
 
-  const text = typeof children === 'string' ? children : String(children)
+  const text  = typeof children === 'string' ? children : String(children)
   const chars = text.split('')
 
   return (
@@ -33,13 +30,13 @@ export default function StaggerText({ children, className = '', style = {}, tag:
         >
           <span
             style={{
-              display: 'inline-block',
-              transform: visible ? 'translateY(0)' : 'translateY(110%)',
-              opacity: visible ? 1 : 0,
+              display:    'inline-block',
+              transform:  visible ? 'translateY(0)' : 'translateY(110%)',
+              opacity:    visible ? 1 : 0,
               transition: `transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.04}s, opacity 0.4s ease ${i * 0.04}s`,
             }}
           >
-            {char === ' ' ? ' ' : char}
+            {char === ' ' ? ' ' : char}
           </span>
         </span>
       ))}

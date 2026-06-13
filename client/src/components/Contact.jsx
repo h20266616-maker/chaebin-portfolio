@@ -23,7 +23,7 @@ export default function Contact() {
           letterSpacing: '-0.04em',
         }}
       >
-        채빈
+        PARKCHAEBEEN
       </div>
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 pt-20 relative z-10">
@@ -37,7 +37,7 @@ export default function Contact() {
           >
             Let's{' '}
             <GlitchText tag="span" style={{ color: '#AAFF00' }}>
-              Connect
+              Contact
             </GlitchText>
           </h2>
         </div>

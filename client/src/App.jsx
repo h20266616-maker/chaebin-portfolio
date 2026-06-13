@@ -13,14 +13,14 @@ function GrainOverlay() {
   return (
     <svg
       style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: 9999,
+        position:      'fixed',
+        top:           0,
+        left:          0,
+        width:         '100%',
+        height:        '100%',
+        zIndex:        9999,
         pointerEvents: 'none',
-        opacity: 0.08,
+        opacity:       0.08,
       }}
     >
       <filter id="grain">
@@ -34,7 +34,7 @@ function GrainOverlay() {
 
 export default function App() {
   const [scrollProgress, setScrollProgress] = useState(0)
-  const [introComplete, setIntroComplete] = useState(false)
+  const [introComplete, setIntroComplete]   = useState(false)
   useRipple()
 
   /* Force the page to start at the top on every load.
@@ -59,29 +59,36 @@ export default function App() {
   }, [])
 
   return (
-    <div className="font-sans">
-      {/* 1 — TV intro overlay, plays once */}
+    <div
+      className="font-sans"
+      style={{ backgroundColor: '#1C1C1C', minHeight: '100vh' }}
+    >
+      {/* 1 — TV intro overlay, plays once.
+          onComplete fires at ~2500ms, the same moment TVIntro begins its own
+          300ms fade-out. Both transitions run concurrently so there is no
+          blank frame between TVIntro and the site content. */}
       <TVIntro onComplete={() => setIntroComplete(true)} />
 
-      {/* 2 — Full site, fades in after intro */}
+      {/* 2 — Full site, cross-fades in while TVIntro is still fading out.
+          No transitionDelay — fade starts the instant introComplete is set
+          so the two opacity animations overlap for their full duration. */}
       <div
         style={{
-          opacity: introComplete ? 1 : 0,
+          opacity:    introComplete ? 1 : 0,
           transition: 'opacity 400ms ease',
-          transitionDelay: introComplete ? '100ms' : '0ms',
         }}
       >
         {/* Scroll-progress bar */}
         <div
           style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            height: '2px',
+            position:        'fixed',
+            top:             0,
+            left:            0,
+            height:          '2px',
             backgroundColor: '#AAFF00',
-            zIndex: 200,
-            width: `${scrollProgress}%`,
-            transition: 'width 60ms linear',
+            zIndex:          200,
+            width:           `${scrollProgress}%`,
+            transition:      'width 60ms linear',
           }}
         />
 
