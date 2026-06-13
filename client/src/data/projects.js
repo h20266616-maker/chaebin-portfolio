@@ -11,7 +11,6 @@ export const projects = [
       'AI 툴은 Claude(Anthropic), ChatGPT(OpenAI), Flow(이미지 생성)를 활용했으며, 학생은 초기 콘셉트 기획과 지문을 모티프로 한 배경 조형 언어 설계, 와이어프레임 오브제 선택, 컬러 팔레트 및 타이포그래피 디렉팅, 포스터 레이아웃 전반을 이끌었습니다.',
     tools: ['Claude', 'ChatGPT', 'Flow'],
     images: [
-      '/images/work/project-01-1.jpg.gif',
       '/images/work/project-01-1.jpg',
       '/images/work/project-01-loop.mp4',
     ],
